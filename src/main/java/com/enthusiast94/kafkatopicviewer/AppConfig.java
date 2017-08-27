@@ -4,15 +4,17 @@ import com.enthusiast94.kafkatopicviewer.config.Config;
 import com.enthusiast94.kafkatopicviewer.config.ConfigLoader;
 import com.enthusiast94.kafkatopicviewer.domain.DefectException;
 import com.enthusiast94.kafkatopicviewer.util.HttpResponseFactory;
-import com.google.common.collect.ImmutableList;
-import org.apache.kafka.clients.admin.AdminClient;
+import kafka.admin.AdminClient;
+import org.I0Itec.zkclient.ZkClient;
 import org.apache.log4j.Logger;
+import org.apache.zookeeper.ZooKeeper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -63,5 +65,27 @@ public class AppConfig {
     @Bean
     public HttpResponseFactory httpResponseFactory() {
         return new HttpResponseFactory();
+    }
+
+    @Bean
+    public ZkClient zkClient(Config config) {
+        String serversString = getZookeeperServersString(config);
+        return new ZkClient(serversString);
+    }
+
+    @Bean
+    public ZooKeeper zooKeeper(Config config) {
+        try {
+            return new ZooKeeper(getZookeeperServersString(config), Integer.MAX_VALUE, null);
+        } catch (IOException e) {
+            log.error("Error setting up Zookeeper", e);
+            throw new DefectException(e);
+        }
+    }
+
+    private String getZookeeperServersString(Config config) {
+        return config.zookeeperNodes.stream()
+                .map(kafkaBroker -> kafkaBroker.hostname + ":" + kafkaBroker.port)
+                .collect(Collectors.joining(","));
     }
 }
