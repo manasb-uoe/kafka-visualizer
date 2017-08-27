@@ -2,9 +2,11 @@ package com.enthusiast94.kafkatopicviewer.controller;
 
 import com.enthusiast94.kafkatopicviewer.domain.KafkaBroker;
 import com.enthusiast94.kafkatopicviewer.domain.KafkaConsumerInfo;
+import com.enthusiast94.kafkatopicviewer.domain.KafkaTopic;
 import com.enthusiast94.kafkatopicviewer.util.HttpResponseFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.primitives.ImmutableIntArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import kafka.admin.AdminClient;
@@ -67,8 +69,12 @@ public class KafkaController {
     @RequestMapping(value = "/topics", method = RequestMethod.GET)
     public ResponseEntity topics() {
         try {
-            ImmutableList<String> topics = ImmutableList.copyOf(zkClient.getChildren("/brokers/topics"));
-            return responseFactory.createOkResponse(topics);
+            ImmutableList<String> topicNames = ImmutableList.copyOf(zkClient.getChildren("/brokers/topics"));
+            ImmutableList<KafkaTopic> kafkaTopics = topicNames.stream()
+                    .map(topicName -> new KafkaTopic(topicName, zkClient.getChildren("/brokers/topics/" +
+                            topicName + "/partitions").size()))
+                    .collect(ImmutableList.toImmutableList());
+            return responseFactory.createOkResponse(kafkaTopics);
         } catch (Exception e) {
             log.error("Error responding to /api/topics", e);
             return responseFactory.createInternalServerErrorResponse(e.getMessage());
