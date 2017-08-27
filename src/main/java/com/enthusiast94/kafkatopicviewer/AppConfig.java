@@ -3,7 +3,9 @@ package com.enthusiast94.kafkatopicviewer;
 import com.enthusiast94.kafkatopicviewer.config.Config;
 import com.enthusiast94.kafkatopicviewer.config.ConfigLoader;
 import com.enthusiast94.kafkatopicviewer.domain.DefectException;
+import com.enthusiast94.kafkatopicviewer.util.HttpResponseFactory;
 import com.google.common.collect.ImmutableList;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -15,6 +17,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Properties;
+import java.util.stream.Collectors;
 
 @Configuration
 public class AppConfig {
@@ -45,5 +49,19 @@ public class AppConfig {
         } catch (URISyntaxException e) {
             throw new DefectException(e);
         }
+    }
+
+    @Bean
+    public AdminClient adminClient(Config config) {
+        Properties properties = new Properties();
+        properties.put("bootstrap.servers", config.kafkaBrokers.stream()
+                .map(kafkaBroker -> kafkaBroker.hostname + ":" + kafkaBroker.port)
+                .collect(Collectors.joining(",")));
+        return AdminClient.create(properties);
+    }
+
+    @Bean
+    public HttpResponseFactory httpResponseFactory() {
+        return new HttpResponseFactory();
     }
 }

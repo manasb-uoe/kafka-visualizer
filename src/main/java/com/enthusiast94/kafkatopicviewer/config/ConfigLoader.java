@@ -17,8 +17,8 @@ public class ConfigLoader {
 
     private static Logger log = Logger.getLogger(ConfigLoader.class);
 
-    private Path configFilePath;
-    private Gson gson = new GsonBuilder()
+    private final Path configFilePath;
+    private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(ImmutableList.class, new ImmutableListGsonDeserializer())
             .create();
 
