@@ -10,12 +10,12 @@ public class HttpResponseFactory {
     private final Gson gson = new Gson();
 
     public <T> ResponseEntity<String> createOkResponse(T body) {
-        return new ResponseEntity<String>(gson.toJson(body), HttpStatus.OK);
+        return new ResponseEntity<>(gson.toJson(body), HttpStatus.OK);
     }
 
-    public ResponseEntity<JsonObject> createInternalServerErrorResponse(String errorMessage) {
+    public ResponseEntity<String> createInternalServerErrorResponse(String errorMessage) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("error", errorMessage);
-        return new ResponseEntity<JsonObject>(jsonObject, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(gson.toJson(jsonObject), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
