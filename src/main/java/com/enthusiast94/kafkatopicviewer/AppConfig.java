@@ -2,10 +2,7 @@ package com.enthusiast94.kafkatopicviewer;
 
 import com.enthusiast94.kafkatopicviewer.domain.DefectException;
 import com.enthusiast94.kafkatopicviewer.util.HttpResponseFactory;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import joptsimple.util.RegexMatcher;
+import kafka.admin.AdminClient;
 import org.I0Itec.zkclient.ZkClient;
 import org.apache.log4j.Logger;
 import org.apache.zookeeper.ZooKeeper;
@@ -18,10 +15,6 @@ import org.springframework.core.annotation.Order;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Configuration
@@ -75,15 +68,6 @@ public class AppConfig {
         };
     }
 
-//    @Bean(destroyMethod = "close")
-//    public AdminClient adminClient(Config config) {
-//        Properties properties = new Properties();
-//        properties.put("bootstrap.servers", config.kafkaBrokers.stream()
-//                .map(kafkaBroker -> kafkaBroker.hostname + ":" + kafkaBroker.port)
-//                .collect(Collectors.joining(",")));
-//        return AdminClient.create(properties);
-//    }
-
     @Bean
     public HttpResponseFactory httpResponseFactory() {
         return new HttpResponseFactory();
@@ -102,5 +86,10 @@ public class AppConfig {
             log.error("Error setting up Zookeeper", e);
             throw new DefectException(e);
         }
+    }
+
+    @Bean(destroyMethod = "close")
+    public AdminClient adminClient(@Value("${kafka}") String kafkaServersString) {
+        return AdminClient.createSimplePlaintext(kafkaServersString);
     }
 }
