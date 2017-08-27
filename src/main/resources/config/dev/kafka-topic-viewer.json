@@ -1,8 +1,0 @@
-{
-  "kafkaBrokers": [
-    {"hostname": "localhost", "port": 9092}
-  ],
-  "zookeeperNodes": [
-    {"hostname": "localhost", "port": 2181}
-  ]
-}
