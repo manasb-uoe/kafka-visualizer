@@ -51,7 +51,7 @@ public class AppConfig {
         }
     }
 
-    @Bean
+    @Bean(destroyMethod = "close")
     public AdminClient adminClient(Config config) {
         Properties properties = new Properties();
         properties.put("bootstrap.servers", config.kafkaBrokers.stream()
