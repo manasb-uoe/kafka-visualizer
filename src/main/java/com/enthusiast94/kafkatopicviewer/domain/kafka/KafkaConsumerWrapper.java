@@ -1,5 +1,6 @@
 package com.enthusiast94.kafkatopicviewer.domain.kafka;
 
+import com.enthusiast94.kafkatopicviewer.util.exception.DefectException;
 import com.google.common.collect.ImmutableList;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -12,6 +13,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class KafkaConsumerWrapper implements AutoCloseable {
@@ -21,6 +23,7 @@ public class KafkaConsumerWrapper implements AutoCloseable {
     private final KafkaConsumer<String, String> kafkaConsumer;
     private final ImmutableList<KafkaTopic> topics;
     private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+    private final AtomicReference<Boolean> isSubscribed = new AtomicReference<>(false);
 
     public KafkaConsumerWrapper(String kafkaServersString, ImmutableList<KafkaTopic> topics) {
         this.topics = topics;
@@ -34,6 +37,12 @@ public class KafkaConsumerWrapper implements AutoCloseable {
     }
 
     public void subscribe(Consumer<ConsumerRecord<String, String>> recordConsumer) {
+        if (isSubscribed.get()) {
+            throw new DefectException("Can only subscribe once!");
+        }
+
+        isSubscribed.set(true);
+
         subscribeFromBeginning();
 
         executorService.scheduleAtFixedRate(() -> {
