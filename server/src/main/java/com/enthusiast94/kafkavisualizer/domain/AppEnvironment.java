@@ -1,6 +1,6 @@
-package com.enthusiast94.kafkatopicviewer.domain;
+package com.enthusiast94.kafkavisualizer.domain;
 
-import com.enthusiast94.kafkatopicviewer.util.exception.DefectException;
+import com.enthusiast94.kafkavisualizer.util.exception.DefectException;
 
 import java.util.Arrays;
 import java.util.Optional;

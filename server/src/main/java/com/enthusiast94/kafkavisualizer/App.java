@@ -1,4 +1,4 @@
-package com.enthusiast94.kafkatopicviewer;
+package com.enthusiast94.kafkavisualizer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

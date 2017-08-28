@@ -1,9 +1,9 @@
-package com.enthusiast94.kafkatopicviewer.service;
+package com.enthusiast94.kafkavisualizer.service;
 
-import com.enthusiast94.kafkatopicviewer.domain.kafka.KafkaBroker;
-import com.enthusiast94.kafkatopicviewer.domain.kafka.KafkaConsumerInfo;
-import com.enthusiast94.kafkatopicviewer.domain.kafka.KafkaTopic;
-import com.enthusiast94.kafkatopicviewer.util.exception.DefectException;
+import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaBroker;
+import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaConsumerInfo;
+import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaTopic;
+import com.enthusiast94.kafkavisualizer.util.exception.DefectException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;

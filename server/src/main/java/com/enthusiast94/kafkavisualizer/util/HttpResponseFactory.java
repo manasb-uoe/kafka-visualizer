@@ -1,4 +1,4 @@
-package com.enthusiast94.kafkatopicviewer.util;
+package com.enthusiast94.kafkavisualizer.util;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

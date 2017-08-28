@@ -1,9 +1,9 @@
-package com.enthusiast94.kafkatopicviewer.controller;
+package com.enthusiast94.kafkavisualizer.controller;
 
-import com.enthusiast94.kafkatopicviewer.domain.kafka.KafkaTopic;
-import com.enthusiast94.kafkatopicviewer.service.KafkaAdmin;
-import com.enthusiast94.kafkatopicviewer.service.KafkaTopicsDataTracker;
-import com.enthusiast94.kafkatopicviewer.util.HttpResponseFactory;
+import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaTopic;
+import com.enthusiast94.kafkavisualizer.service.KafkaAdmin;
+import com.enthusiast94.kafkavisualizer.service.KafkaTopicsDataTracker;
+import com.enthusiast94.kafkavisualizer.util.HttpResponseFactory;
 import com.google.common.collect.ImmutableList;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.log4j.Logger;

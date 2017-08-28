@@ -1,6 +1,6 @@
-package com.enthusiast94.kafkatopicviewer.service;
+package com.enthusiast94.kafkavisualizer.service;
 
-import com.enthusiast94.kafkatopicviewer.domain.kafka.KafkaConsumerWrapper;
+import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaConsumerWrapper;
 import com.google.common.collect.*;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;

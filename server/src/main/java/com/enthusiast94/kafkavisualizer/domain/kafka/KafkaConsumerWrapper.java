@@ -1,6 +1,6 @@
-package com.enthusiast94.kafkatopicviewer.domain.kafka;
+package com.enthusiast94.kafkavisualizer.domain.kafka;
 
-import com.enthusiast94.kafkatopicviewer.util.exception.DefectException;
+import com.enthusiast94.kafkavisualizer.util.exception.DefectException;
 import com.google.common.collect.ImmutableList;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;

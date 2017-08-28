@@ -1,4 +1,4 @@
-package com.enthusiast94.kafkatopicviewer.domain.zookeeper;
+package com.enthusiast94.kafkavisualizer.domain.zookeeper;
 
 public class ZookeeperNode {
     public String hostname;

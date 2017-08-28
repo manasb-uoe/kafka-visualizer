@@ -1,4 +1,4 @@
-package com.enthusiast94.kafkatopicviewer.util.exception;
+package com.enthusiast94.kafkavisualizer.util.exception;
 
 public class DefectException extends RuntimeException {
 
