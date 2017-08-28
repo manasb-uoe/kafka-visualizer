@@ -3,21 +3,19 @@ package com.enthusiast94.kafkatopicviewer;
 import com.enthusiast94.kafkatopicviewer.domain.kafka.KafkaConsumerWrapper;
 import com.enthusiast94.kafkatopicviewer.service.KafkaAdmin;
 import com.enthusiast94.kafkatopicviewer.service.KafkaTopicsDataTracker;
-import com.enthusiast94.kafkatopicviewer.util.exception.DefectException;
 import com.enthusiast94.kafkatopicviewer.util.HttpResponseFactory;
+import com.enthusiast94.kafkatopicviewer.util.exception.DefectException;
 import kafka.admin.AdminClient;
 import org.I0Itec.zkclient.ZkClient;
 import org.apache.log4j.Logger;
 import org.apache.zookeeper.ZooKeeper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
 @Configuration
@@ -52,22 +50,6 @@ public class AppConfig {
                 throw new DefectException("Incorrect format of required command line arguments! The format " +
                         "must be: [" + zookeeperPattern.pattern() + "] [" + kafkaPattern.pattern() + "]");
             }
-        };
-    }
-
-    @Bean
-    @Order(2)
-    public CommandLineRunner logSpringBootProvidedBeans(ApplicationContext ctx) {
-        return args -> {
-            log.info("Let's inspect the beans provided by Spring Boot:");
-
-            log.info("-----------------------------------------------");
-            String[] beanNames = ctx.getBeanDefinitionNames();
-            Arrays.sort(beanNames);
-            for (String beanName : beanNames) {
-                log.info(beanName);
-            }
-            log.info("-----------------------------------------------");
         };
     }
 
@@ -107,8 +89,8 @@ public class AppConfig {
     }
 
     @Bean
-    public KafkaTopicsDataTracker consumerTest(KafkaAdmin kafkaAdmin,
-                                               KafkaConsumerWrapper kafkaConsumerWrapper) {
+    public KafkaTopicsDataTracker kafkaTopicsDataTracker(KafkaAdmin kafkaAdmin,
+                                                         KafkaConsumerWrapper kafkaConsumerWrapper) {
         KafkaTopicsDataTracker kafkaTopicsDataTracker = new KafkaTopicsDataTracker(kafkaConsumerWrapper);
         kafkaTopicsDataTracker.start();
         return kafkaTopicsDataTracker;
