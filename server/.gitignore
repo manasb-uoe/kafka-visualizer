@@ -2,3 +2,4 @@
 .idea/
 kafka-topic-viewer.iml
 web-client/kafka-topic-viewer/node_modules
+target/
