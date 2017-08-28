@@ -1,5 +1,7 @@
 package com.enthusiast94.kafkatopicviewer.domain;
 
+import com.enthusiast94.kafkatopicviewer.util.exception.DefectException;
+
 import java.util.Arrays;
 import java.util.Optional;
 

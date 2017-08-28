@@ -1,6 +1,9 @@
 package com.enthusiast94.kafkatopicviewer;
 
-import com.enthusiast94.kafkatopicviewer.domain.DefectException;
+import com.enthusiast94.kafkatopicviewer.domain.kafka.KafkaConsumerWrapper;
+import com.enthusiast94.kafkatopicviewer.service.KafkaAdmin;
+import com.enthusiast94.kafkatopicviewer.service.KafkaTopicsDataTracker;
+import com.enthusiast94.kafkatopicviewer.util.exception.DefectException;
 import com.enthusiast94.kafkatopicviewer.util.HttpResponseFactory;
 import kafka.admin.AdminClient;
 import org.I0Itec.zkclient.ZkClient;
@@ -91,5 +94,23 @@ public class AppConfig {
     @Bean(destroyMethod = "close")
     public AdminClient adminClient(@Value("${kafka}") String kafkaServersString) {
         return AdminClient.createSimplePlaintext(kafkaServersString);
+    }
+
+    @Bean
+    public KafkaAdmin kafkaAdmin(ZooKeeper zooKeeper, ZkClient zkClient, AdminClient adminClient) {
+        return new KafkaAdmin(zkClient, zooKeeper, adminClient);
+    }
+
+    @Bean(destroyMethod = "close")
+    public KafkaConsumerWrapper kafkaConsumerWrapper(@Value("${kafka}") String kafkaServersString, KafkaAdmin kafkaAdmin) {
+        return new KafkaConsumerWrapper(kafkaServersString, kafkaAdmin.getAllTopics());
+    }
+
+    @Bean
+    public KafkaTopicsDataTracker consumerTest(KafkaAdmin kafkaAdmin,
+                                               KafkaConsumerWrapper kafkaConsumerWrapper) {
+        KafkaTopicsDataTracker kafkaTopicsDataTracker = new KafkaTopicsDataTracker(kafkaConsumerWrapper);
+        kafkaTopicsDataTracker.start();
+        return kafkaTopicsDataTracker;
     }
 }

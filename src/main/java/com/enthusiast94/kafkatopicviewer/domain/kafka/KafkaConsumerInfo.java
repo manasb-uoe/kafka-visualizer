@@ -1,6 +1,4 @@
-package com.enthusiast94.kafkatopicviewer.domain;
-
-import jdk.nashorn.internal.ir.Assignment;
+package com.enthusiast94.kafkatopicviewer.domain.kafka;
 
 import java.util.List;
 import java.util.Objects;

@@ -14,8 +14,16 @@ public class HttpResponseFactory {
     }
 
     public ResponseEntity<String> createInternalServerErrorResponse(String errorMessage) {
+        return new ResponseEntity<>(createErrorJsonString(errorMessage), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    public ResponseEntity<String> create404ErrorResponse(String errorMessage) {
+        return new ResponseEntity<String>(createErrorJsonString(errorMessage), HttpStatus.NOT_FOUND);
+    }
+
+    private String createErrorJsonString(String errorMessage) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("error", errorMessage);
-        return new ResponseEntity<>(gson.toJson(jsonObject), HttpStatus.INTERNAL_SERVER_ERROR);
+        return gson.toJson(jsonObject);
     }
 }

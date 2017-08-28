@@ -1,4 +1,4 @@
-package com.enthusiast94.kafkatopicviewer.domain;
+package com.enthusiast94.kafkatopicviewer.domain.kafka;
 
 import java.util.Objects;
 
