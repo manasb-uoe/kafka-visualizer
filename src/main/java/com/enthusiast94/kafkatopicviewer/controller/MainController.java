@@ -83,7 +83,7 @@ public class MainController {
         }
     }
 
-    private boolean doesTopicAndPartitionExist(@PathVariable("topicName") String topicName, @PathVariable("partition") int partition, ImmutableList<KafkaTopic> allTopics) {
+    private boolean doesTopicAndPartitionExist(String topicName, int partition, ImmutableList<KafkaTopic> allTopics) {
         return allTopics.stream().anyMatch(topic -> topic.name.equals(topicName) && partition < topic.numPartitions);
     }
 }
