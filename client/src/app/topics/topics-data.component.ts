@@ -64,7 +64,7 @@ export class TopicsDataComponent {
   @Input()
   public set selectedTopic(topic: KafkaTopic) {
     this._selectedTopic = topic;
-    this.selectedPartition = 0;
+    this._selectedPartition = 0;
     this.topicMessages.length = 0;
 
     this.onTopicOrPartitionChanged();
@@ -87,6 +87,7 @@ export class TopicsDataComponent {
 
   public set selectedPartition(partition: number) {
     this._selectedPartition = partition;
+    this.topicMessages.length = 0;
 
     this.onTopicOrPartitionChanged();
   }
