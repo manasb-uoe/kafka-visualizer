@@ -1,5 +1,6 @@
 package com.enthusiast94.kafkavisualizer.service;
 
+import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaStatics;
 import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaTopic;
 import com.enthusiast94.kafkavisualizer.util.exception.DefectException;
 import com.google.common.collect.ImmutableList;
@@ -7,7 +8,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.log4j.Logger;
 
 import java.util.Properties;
 import java.util.concurrent.Executors;
@@ -17,8 +17,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class KafkaConsumerWrapper implements AutoCloseable {
-
-    private static final Logger log = Logger.getLogger(KafkaConsumerWrapper.class);
 
     private final KafkaConsumer<String, String> kafkaConsumer;
     private final ImmutableList<KafkaTopic> topics;
@@ -30,7 +28,7 @@ public class KafkaConsumerWrapper implements AutoCloseable {
 
         Properties properties = new Properties();
         properties.put("bootstrap.servers", kafkaServersString);
-        properties.put("group.id", "testGroupId");
+        properties.put("group.id", KafkaStatics.GROUP_ID);
         properties.put("enable.auto.commit", "true");
 
         kafkaConsumer = new KafkaConsumer<>(properties, new StringDeserializer(), new StringDeserializer());

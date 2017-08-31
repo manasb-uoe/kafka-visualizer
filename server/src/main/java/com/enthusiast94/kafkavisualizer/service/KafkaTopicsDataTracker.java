@@ -1,6 +1,5 @@
 package com.enthusiast94.kafkavisualizer.service;
 
-import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaConsumerWrapper;
 import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.ImmutableList;
 import org.apache.kafka.clients.consumer.ConsumerRecord;

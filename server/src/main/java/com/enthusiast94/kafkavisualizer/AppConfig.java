@@ -2,8 +2,8 @@ package com.enthusiast94.kafkavisualizer;
 
 import com.enthusiast94.kafkavisualizer.api.MainResource;
 import com.enthusiast94.kafkavisualizer.domain.CommandLineArgs;
-import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaConsumerWrapper;
 import com.enthusiast94.kafkavisualizer.service.KafkaAdmin;
+import com.enthusiast94.kafkavisualizer.service.KafkaConsumerWrapper;
 import com.enthusiast94.kafkavisualizer.service.KafkaTopicsDataTracker;
 import com.enthusiast94.kafkavisualizer.util.HttpResponseFactory;
 import com.enthusiast94.kafkavisualizer.util.exception.DefectException;
