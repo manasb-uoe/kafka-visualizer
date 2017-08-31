@@ -1,4 +1,4 @@
-package com.enthusiast94.kafkavisualizer.controller;
+package com.enthusiast94.kafkavisualizer.api;
 
 import com.enthusiast94.kafkavisualizer.service.KafkaAdmin;
 import com.enthusiast94.kafkavisualizer.service.KafkaTopicsDataTracker;
@@ -16,15 +16,15 @@ import javax.ws.rs.core.Response;
 @Named
 @Path("/api")
 @Produces(MediaType.APPLICATION_JSON_VALUE)
-public class MainController {
+public class MainResource {
 
     private final KafkaAdmin kafkaAdmin;
     private final KafkaTopicsDataTracker kafkaTopicsDataTracker;
     private final HttpResponseFactory responseFactory;
 
-    public MainController(KafkaAdmin kafkaAdmin,
-                          KafkaTopicsDataTracker kafkaTopicsDataTracker,
-                          HttpResponseFactory responseFactory) {
+    public MainResource(KafkaAdmin kafkaAdmin,
+                        KafkaTopicsDataTracker kafkaTopicsDataTracker,
+                        HttpResponseFactory responseFactory) {
         this.kafkaAdmin = kafkaAdmin;
         this.kafkaTopicsDataTracker = kafkaTopicsDataTracker;
         this.responseFactory = responseFactory;

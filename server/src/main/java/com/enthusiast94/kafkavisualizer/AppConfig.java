@@ -1,6 +1,6 @@
 package com.enthusiast94.kafkavisualizer;
 
-import com.enthusiast94.kafkavisualizer.controller.MainController;
+import com.enthusiast94.kafkavisualizer.api.MainResource;
 import com.enthusiast94.kafkavisualizer.domain.CommandLineArgs;
 import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaConsumerWrapper;
 import com.enthusiast94.kafkavisualizer.service.KafkaAdmin;
@@ -26,7 +26,7 @@ public class AppConfig {
     }
 
     @Bean
-    public ResourceConfig resourceConfig(MainController mainResource) {
+    public ResourceConfig resourceConfig(MainResource mainResource) {
         return new ResourceConfig().register(mainResource);
     }
 
