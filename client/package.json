@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve -proxy-config proxy.conf.json",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -21,9 +21,11 @@
     "@angular/platform-browser": "^4.2.4",
     "@angular/platform-browser-dynamic": "^4.2.4",
     "@angular/router": "^4.2.4",
+    "angular2-prettyjson": "^2.0.5",
     "bootstrap": "^4.0.0-beta",
     "core-js": "^2.4.1",
     "ng-bootstrap": "^1.6.3",
+    "ngx-progressbar": "^2.0.5",
     "rxjs": "^5.4.2",
     "zone.js": "^0.8.14"
   },
