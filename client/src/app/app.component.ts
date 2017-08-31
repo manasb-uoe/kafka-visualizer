@@ -1,9 +1,13 @@
-import { Component } from '@angular/core';
+import { Component } from "@angular/core";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html'
+  selector: "app-root",
+  template: `
+        <ng-progress></ng-progress>
+        <navbar></navbar>
+        <div class="container-fluid">
+            <router-outlet></router-outlet>
+        </div>
+    `
 })
-export class AppComponent {
-  title = 'app';
-}
+export class AppComponent {}

@@ -1,1 +1,45 @@
 /* You can add global styles to this file, and also import other style files */
+
+body {
+  padding-top: 50px;
+}
+
+.pointable {
+  cursor: pointer;
+}
+
+.selectable:hover {
+  background-color: rgba(0, 0, 0, .1);
+}
+
+.selected {
+  background-color: rgba(0, 0, 0, .1);
+}
+
+/* angular2-prettyjson styles */
+
+pre span {
+  white-space: normal;
+}
+
+.string {
+  color: green;
+}
+
+.number {
+  color: darkorange;
+}
+
+.boolean {
+  color: blue;
+}
+
+.null {
+  color: magenta;
+}
+
+.key {
+  color: red;
+}
+
+/*---------------------*/

@@ -1,5 +1,6 @@
 package com.enthusiast94.kafkavisualizer;
 
+import com.enthusiast94.kafkavisualizer.controller.MainController;
 import com.enthusiast94.kafkavisualizer.domain.CommandLineArgs;
 import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaConsumerWrapper;
 import com.enthusiast94.kafkavisualizer.service.KafkaAdmin;
@@ -8,26 +9,25 @@ import com.enthusiast94.kafkavisualizer.util.HttpResponseFactory;
 import com.enthusiast94.kafkavisualizer.util.exception.DefectException;
 import kafka.admin.AdminClient;
 import org.I0Itec.zkclient.ZkClient;
-import org.apache.log4j.Logger;
 import org.apache.zookeeper.ZooKeeper;
-import org.springframework.beans.factory.annotation.Value;
+import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 
 import java.io.IOException;
-import java.util.regex.Pattern;
 
 @Configuration
 public class AppConfig {
 
-    private static Logger log = Logger.getLogger(AppConfig.class);
-
     @Bean
     public CommandLineArgs commandLineArgs(ApplicationArguments applicationArguments) {
         return new CommandLineArgs(applicationArguments.getSourceArgs());
+    }
+
+    @Bean
+    public ResourceConfig resourceConfig(MainController mainResource) {
+        return new ResourceConfig().register(mainResource);
     }
 
     @Bean
@@ -45,7 +45,6 @@ public class AppConfig {
         try {
             return new ZooKeeper(commandLineArgs.zookeeperServers, Integer.MAX_VALUE, null);
         } catch (IOException e) {
-            log.error("Error setting up Zookeeper", e);
             throw new DefectException(e);
         }
     }
@@ -66,9 +65,8 @@ public class AppConfig {
     }
 
     @Bean
-    public KafkaTopicsDataTracker kafkaTopicsDataTracker(KafkaAdmin kafkaAdmin,
-                                                         KafkaConsumerWrapper kafkaConsumerWrapper) {
-        KafkaTopicsDataTracker kafkaTopicsDataTracker = new KafkaTopicsDataTracker(kafkaConsumerWrapper);
+    public KafkaTopicsDataTracker kafkaTopicsDataTracker(KafkaConsumerWrapper kafkaConsumerWrapper) {
+        KafkaTopicsDataTracker kafkaTopicsDataTracker = new KafkaTopicsDataTracker(kafkaConsumerWrapper, 30);
         kafkaTopicsDataTracker.start();
         return kafkaTopicsDataTracker;
     }

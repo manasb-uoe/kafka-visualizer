@@ -4,14 +4,17 @@ import java.util.List;
 import java.util.Objects;
 
 public class KafkaConsumerInfo {
-    public String consumerId;
-    public String clientId;
-    public List<Assignment> assignments;
 
-    public KafkaConsumerInfo(String consumerId, String clientId, List<Assignment> assignments) {
+    public final String consumerId;
+    public final String clientId;
+    public final List<Assignment> assignments;
+    public final String groupId;
+
+    public KafkaConsumerInfo(String consumerId, String clientId, List<Assignment> assignments, String groupId) {
         this.consumerId = consumerId;
         this.clientId = clientId;
         this.assignments = assignments;
+        this.groupId = groupId;
     }
 
     @Override
@@ -21,12 +24,8 @@ public class KafkaConsumerInfo {
         KafkaConsumerInfo that = (KafkaConsumerInfo) o;
         return Objects.equals(consumerId, that.consumerId) &&
                 Objects.equals(clientId, that.clientId) &&
-                Objects.equals(assignments, that.assignments);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(consumerId, clientId, assignments);
+                Objects.equals(assignments, that.assignments) &&
+                Objects.equals(groupId, that.groupId);
     }
 
     @Override
@@ -35,7 +34,13 @@ public class KafkaConsumerInfo {
                 "consumerId='" + consumerId + '\'' +
                 ", clientId='" + clientId + '\'' +
                 ", assignments=" + assignments +
+                ", groupId='" + groupId + '\'' +
                 '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(consumerId, clientId, assignments, groupId);
     }
 
     public static class Assignment {
@@ -70,3 +75,4 @@ public class KafkaConsumerInfo {
         }
     }
 }
+

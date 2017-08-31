@@ -2,23 +2,28 @@ package com.enthusiast94.kafkavisualizer.util;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
+import javax.ws.rs.core.Response;
+
 
 public class HttpResponseFactory {
 
     private final Gson gson = new Gson();
 
-    public <T> ResponseEntity<String> createOkResponse(T body) {
-        return new ResponseEntity<>(gson.toJson(body), HttpStatus.OK);
+    public <T> Response createOkResponse(T body) {
+        return Response.ok().entity(gson.toJson(body)).build();
     }
 
-    public ResponseEntity<String> createInternalServerErrorResponse(String errorMessage) {
-        return new ResponseEntity<>(createErrorJsonString(errorMessage), HttpStatus.INTERNAL_SERVER_ERROR);
+    public Response createServerErrorResponse(Exception e) {
+        return Response.serverError().entity(createErrorJsonString(e.getMessage())).build();
     }
 
-    public ResponseEntity<String> create404ErrorResponse(String errorMessage) {
-        return new ResponseEntity<String>(createErrorJsonString(errorMessage), HttpStatus.NOT_FOUND);
+    public Response createServerErrorResponse(String errorMessage) {
+        return Response.serverError().entity(createErrorJsonString(errorMessage)).build();
+    }
+
+    public Response create404ErrorResponse(String errorMessage) {
+        return Response.status(Response.Status.NOT_FOUND).entity(createErrorJsonString(errorMessage)).build();
     }
 
     private String createErrorJsonString(String errorMessage) {
