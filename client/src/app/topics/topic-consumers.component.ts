@@ -9,7 +9,6 @@ import {Consumer} from "../domain/Consumer";
         <div class="card">
             <h6 *ngIf="selectedTopicPartition" class="card-header">Showing consumers for <span
                     class="text-primary">{{selectedTopicPartition.topic.name}}</span>
-                <div class="text-success">Partition: {{selectedTopicPartition.partition}}</div>
             </h6>
 
             <h6 *ngIf="!selectedTopicPartition" class="card-header">No Topic Selected</h6>
@@ -65,6 +64,4 @@ export class TopicConsumersComponent {
     public get selectedTopicPartition() {
         return this._selectedTopicPartition;
     }
-
-
 }
