@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from "@angular/core";
 import {KafkaTopic} from "../domain/KafkaTopic";
-import {ApiService} from "./api.service";
+import {ApiService} from "../services/api.service";
 import {TopicMessage} from "../domain/TopicMessage";
 import {TopicPartition} from "../domain/TopicPartition";
 

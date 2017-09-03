@@ -1,6 +1,6 @@
 import {Component, Input} from "@angular/core";
 import {TopicPartition} from "../domain/TopicPartition";
-import {ApiService} from "./api.service";
+import {ApiService} from "../services/api.service";
 import {Consumer} from "../domain/Consumer";
 
 @Component({

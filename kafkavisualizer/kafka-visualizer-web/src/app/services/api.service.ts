@@ -4,11 +4,16 @@ import {Observable} from "rxjs/Observable";
 import {KafkaTopic} from "../domain/KafkaTopic";
 import {TopicMessage} from "../domain/TopicMessage";
 import {Consumer} from "../domain/Consumer";
+import {KafkaBroker} from "../domain/KafkaBroker";
 
 @Injectable()
 export class ApiService {
 
     public constructor(private http: Http) {
+    }
+
+    public getBrokers(): Observable<Array<KafkaBroker>> {
+        return this.http.get("/api/brokers").map(response => response.json());
     }
 
     public getTopics(): Observable<Array<KafkaTopic>> {
