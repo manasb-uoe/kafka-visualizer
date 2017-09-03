@@ -10,7 +10,7 @@ Run the provided executable jar using the following command and then navigate to
 - **`/api/brokers`**: Returns a list of all brokers in the cluster.
 - **`/api/topics`**: Returns a list of all topics in the cluster
 - **`/api/consumers`**: Returns a list of all active consumers.
-- **`/api/consumers`**{topicName}/{partition}: Returns a list of active consumers for a certain topic-partition pair.
+- **`/api/consumers/{topicName}/{partition}`**: Returns a list of active consumers for a certain topic-partition pair.
 - **`/api/topics/{topicName}/{partition}`**: Returns a list of messages on a certain topic-partition pair.
 
 ### Screenshots 
