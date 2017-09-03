@@ -58,8 +58,10 @@ public class AppConfig {
     }
 
     @Bean
-    public KafkaTopicsDataTracker kafkaTopicsDataTracker(KafkaConsumerWrapper kafkaConsumerWrapper) {
-        KafkaTopicsDataTracker kafkaTopicsDataTracker = new KafkaTopicsDataTracker(kafkaConsumerWrapper, 30);
+    public KafkaTopicsDataTracker kafkaTopicsDataTracker(KafkaConsumerWrapper kafkaConsumerWrapper,
+                                                         CommandLineArgs commandLineArgs) {
+        KafkaTopicsDataTracker kafkaTopicsDataTracker =
+                new KafkaTopicsDataTracker(kafkaConsumerWrapper, commandLineArgs.maxTopicMessagesCount);
         kafkaTopicsDataTracker.start();
         return kafkaTopicsDataTracker;
     }
