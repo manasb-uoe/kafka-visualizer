@@ -2,6 +2,7 @@ import {Component, EventEmitter, Inject, OnInit, Output} from "@angular/core";
 import {ApiService} from "../services/api.service";
 import {KafkaTopic} from "../domain/KafkaTopic";
 import {DOCUMENT} from "@angular/platform-browser";
+import {StringUtils} from "../utils/StringUtils";
 
 @Component({
     selector: "topics-list",
@@ -16,7 +17,7 @@ import {DOCUMENT} from "@angular/platform-browser";
             <ul class="list-group list-group-flush">
                 <li *ngFor="let topic of filteredTopics" class="list-group-item pointable selectable"
                     [class.selected]="topic.isSelected" (click)="selectTopic(topic)">
-                    <div [innerHtml]="getMarkedTopicName(topic.name)"></div>
+                    <div [innerHtml]="markSearchTermInString(topic.name)"></div>
                     <div class="text-primary">Partitions: {{topic.numPartitions}}</div>
                 </li>
             </ul>
@@ -71,29 +72,9 @@ export class TopicsListComponent implements OnInit {
         this.filterTopics();
     }
 
-    public getMarkedTopicName(topicName: string): string {
-        if (!this.searchTerm || this.searchTerm.length === 0) {
-            return topicName;
-        }
-
-        let markedTopicName = "";
-
-        const firstOccurrenceIndex = topicName.toLowerCase().indexOf(this.searchTerm.toLowerCase());
-
-        for (let i=0; i<topicName.length; i++) {
-            if (i === firstOccurrenceIndex) {
-                markedTopicName += "<mark>";
-            }
-
-            if (i === firstOccurrenceIndex + this.searchTerm.length) {
-                markedTopicName += "</mark>";
-            }
-
-            markedTopicName += topicName[i];
-        }
-
-        return markedTopicName;
-    }
+  public markSearchTermInString(inputString: string): string {
+      return StringUtils.markSearchTermInString(inputString, this.searchTerm);
+  }
 
     private scrollToTop(): void {
         this.document.body.scrollTop = 0;
