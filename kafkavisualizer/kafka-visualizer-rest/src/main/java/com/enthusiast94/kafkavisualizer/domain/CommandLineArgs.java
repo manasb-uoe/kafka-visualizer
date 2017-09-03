@@ -1,7 +1,6 @@
 package com.enthusiast94.kafkavisualizer.domain;
 
 import com.enthusiast94.kafkavisualizer.util.exception.DefectException;
-import com.google.common.base.Joiner;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -12,6 +11,7 @@ public class CommandLineArgs {
 
     public final String kafkaServers;
     public final String zookeeperServers;
+    public final int maxTopicMessagesCount;
 
     public CommandLineArgs(String[] args) {
         if (args.length < 2) {
@@ -36,5 +36,12 @@ public class CommandLineArgs {
         }
 
         zookeeperServers = zookeeperMatcher.group(1);
+
+        Matcher maxTopicMessagesCountMatcher = Pattern.compile("--maxTopicMessagesCount=([0-9]+)").matcher(argsString);
+        if (!maxTopicMessagesCountMatcher.find()) {
+            maxTopicMessagesCount = 100;
+        } else {
+            maxTopicMessagesCount = Integer.valueOf(maxTopicMessagesCountMatcher.group(1));
+        }
     }
 }
