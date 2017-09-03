@@ -1,5 +1,6 @@
 body {
   padding-top: 50px;
+  font-size: 90% !important;
 }
 
 .pointable {
@@ -12,6 +13,14 @@ body {
 
 .selected {
   background-color: rgba(0, 0, 0, .1) !important;
+}
+
+.card-header, .list-group-item, .card-body {
+  padding: .50rem 1rem !important;
+}
+
+.card-header-title {
+  font-weight: 600;
 }
 
 /* angular2-prettyjson styles */

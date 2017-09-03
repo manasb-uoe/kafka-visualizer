@@ -11,21 +11,21 @@ import {StringUtils} from "../utils/StringUtils";
     <div class="card">
       <div *ngIf="selectedTopic" class="card-header">
         <div style="display: flex; align-items: center; justify-content: space-between; flex-direction: row">
-          <h6 style="margin-bottom: 0;">
+          <div class="card-header-title" style="margin-bottom: 0;">
             Showing messages for <span class="text-primary">{{selectedTopic.name}}</span>
-          </h6>
+          </div>
           <div style="align-self: flex-end">
             <div style="padding-right: 10px; display: inline;">Partition:</div>
             <select [(ngModel)]="selectedPartition" style="display: inline; width: 100px;"
-                    class="form-control">
+                    class="form-control form-control-sm">
               <option *ngFor="let partition of getPartitionsList()">{{partition}}</option>
             </select>
           </div>
         </div>
-        <input [ngModel]="searchTerm" (ngModelChange)="onSearchTermChanged($event)" class="form-control"
+        <input [ngModel]="searchTerm" (ngModelChange)="onSearchTermChanged($event)" class="form-control form-control-sm"
                placeholder="Search" style="margin-top: 10px;">
       </div>
-      <h6 *ngIf="!selectedTopic" class="card-header">No Topic Selected</h6>
+      <div *ngIf="!selectedTopic" class="card-header card-header-title">No Topic Selected</div>
       <ul *ngIf="filteredTopicMessages.length > 0" class="list-group list-group-flush">
         <collapsible-item *ngFor="let message of filteredTopicMessages">
           <div item-header>

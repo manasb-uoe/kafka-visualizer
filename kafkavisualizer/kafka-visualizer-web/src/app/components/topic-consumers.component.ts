@@ -7,11 +7,11 @@ import {Consumer} from "../domain/Consumer";
     selector: "topic-consumers",
     template: `
         <div class="card">
-            <h6 *ngIf="selectedTopicPartition" class="card-header">Showing consumers for <span
+            <div *ngIf="selectedTopicPartition" class="card-header card-header-title">Showing consumers for <span
                     class="text-primary">{{selectedTopicPartition.topic.name}}</span>
-            </h6>
+            </div>
 
-            <h6 *ngIf="!selectedTopicPartition" class="card-header">No Topic Selected</h6>
+            <div *ngIf="!selectedTopicPartition" class="card-header card-header-title">No Topic Selected</div>
 
             <ul *ngIf="consumers.length > 0" class="list-group list-group-flush">
                 <collapsible-item *ngFor="let consumer of consumers">

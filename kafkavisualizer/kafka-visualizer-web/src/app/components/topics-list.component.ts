@@ -8,11 +8,11 @@ import {StringUtils} from "../utils/StringUtils";
     selector: "topics-list",
     template: `
         <div class="card">
-            <h6 class="card-header">
-                <div>Topics</div>
-                <input [ngModel]="searchTerm" (ngModelChange)="onSearchTermChanged($event)" class="form-control"
+            <div class="card-header">
+                <div class="card-header-title">Topics</div>
+                <input [ngModel]="searchTerm" (ngModelChange)="onSearchTermChanged($event)" class="form-control form-control-sm"
                        placeholder="Search" style="margin-top: 10px;">
-            </h6>
+            </div>
             
             <ul class="list-group list-group-flush">
                 <li *ngFor="let topic of filteredTopics" class="list-group-item pointable selectable"

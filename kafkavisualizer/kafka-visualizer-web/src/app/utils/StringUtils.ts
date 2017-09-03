@@ -14,11 +14,11 @@ export class StringUtils {
 
     for (let i = 0; i < inputString.length; i++) {
       if (i === firstOccurrenceIndex) {
-        markedString += "<kbd>";
+        markedString += "<mark>";
       }
 
       if (i === firstOccurrenceIndex + searchTerm.length) {
-        markedString += "</kbd>";
+        markedString += "</mark>";
       }
 
       markedString += inputString[i];

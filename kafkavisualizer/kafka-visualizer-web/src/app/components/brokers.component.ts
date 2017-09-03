@@ -6,7 +6,7 @@ import {ApiService} from "../services/api.service";
     selector: "brokers",
     template: `
         <div class="card">
-            <h6 class="card-header">Registered Brokers</h6>
+            <div class="card-header card-header-title">Registered Brokers</div>
 
             <ul ng-if="!isLoading" class="list-group list-group-flush">
                 <li *ngFor="let broker of brokers" class="list-group-item">
