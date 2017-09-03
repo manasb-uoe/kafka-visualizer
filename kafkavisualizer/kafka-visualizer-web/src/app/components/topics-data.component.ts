@@ -15,7 +15,7 @@ import {TopicPartition} from "../domain/TopicPartition";
                 </h6>
                 <div style="align-self: flex-end">
                     <div style="padding-right: 10px; display: inline;">Partition:</div>
-                    <select (change)="selectedPartition = $event.target.value" style="display: inline; width: 100px;"
+                    <select [(ngModel)]="selectedPartition" style="display: inline; width: 100px;"
                             class="form-control">
                         <option *ngFor="let partition of getPartitionsList()">{{partition}}</option>
                     </select>
@@ -30,7 +30,7 @@ import {TopicPartition} from "../domain/TopicPartition";
                         <div>{{message.value}}</div>
                     </div>
                     <div item-body>
-                        <pre [innerHtml]="tryParseJson(message.value) | prettyjson:3"></pre>
+                        <pre [innerHtml]="tryParseJson(message.value) | prettyjson:2"></pre>
                     </div>
                 </collapsible-item>
             </ul>
