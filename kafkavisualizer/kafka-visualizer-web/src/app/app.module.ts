@@ -15,33 +15,35 @@ import {TopicConsumersComponent} from "./components/topic-consumers.component";
 import {CollapsibleItemComponent} from "./components/collapsible-item.component";
 import {ApiService} from "./services/api.service";
 import {JsonPipe} from "@angular/common";
+import {TopicPublisherComponent} from "./components/topic-publisher.component";
 
 @NgModule({
-    imports: [
-        BrowserModule,
-        FormsModule,
-        HttpModule,
-        ReactiveFormsModule,
-        Ng2BootstrapModule.forRoot(),
-        NgProgressModule,
-        PrettyJsonModule
-    ],
-    declarations: [
-        AppComponent,
-        NavbarComponent,
-        AppBodyComponent,
-        BrokersComponent,
-        TopicsListComponent,
-        TopicsDataComponent,
-        TopicConsumersComponent,
-        CollapsibleItemComponent
-    ],
-    providers: [
-        ApiService,
-        { provide: BrowserXhr, useClass: NgProgressBrowserXhr },
-        { provide: JsonPipe, useClass: SafeJsonPipe }
-    ],
-    bootstrap: [AppComponent],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    HttpModule,
+    ReactiveFormsModule,
+    Ng2BootstrapModule.forRoot(),
+    NgProgressModule,
+    PrettyJsonModule
+  ],
+  declarations: [
+    AppComponent,
+    NavbarComponent,
+    AppBodyComponent,
+    BrokersComponent,
+    TopicsListComponent,
+    TopicsDataComponent,
+    TopicConsumersComponent,
+    TopicPublisherComponent,
+    CollapsibleItemComponent
+  ],
+  providers: [
+    ApiService,
+    {provide: BrowserXhr, useClass: NgProgressBrowserXhr},
+    {provide: JsonPipe, useClass: SafeJsonPipe}
+  ],
+  bootstrap: [AppComponent],
 })
 export class AppModule {
 }

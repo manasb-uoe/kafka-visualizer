@@ -11,7 +11,6 @@ import org.springframework.http.MediaType;
 import javax.inject.Named;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.util.concurrent.Future;
 
 @Named
 @Path("/")
