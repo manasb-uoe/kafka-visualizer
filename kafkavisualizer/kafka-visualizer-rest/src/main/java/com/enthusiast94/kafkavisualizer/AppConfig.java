@@ -3,6 +3,7 @@ package com.enthusiast94.kafkavisualizer;
 import com.enthusiast94.kafkavisualizer.domain.CommandLineArgs;
 import com.enthusiast94.kafkavisualizer.service.KafkaAdmin;
 import com.enthusiast94.kafkavisualizer.service.KafkaConsumerWrapper;
+import com.enthusiast94.kafkavisualizer.service.KafkaProducerWrapper;
 import com.enthusiast94.kafkavisualizer.service.KafkaTopicsDataTracker;
 import com.enthusiast94.kafkavisualizer.util.HttpResponseFactory;
 import com.enthusiast94.kafkavisualizer.util.exception.DefectException;
@@ -55,6 +56,11 @@ public class AppConfig {
     @Bean(destroyMethod = "close")
     public KafkaConsumerWrapper kafkaConsumerWrapper(CommandLineArgs commandLineArgs, KafkaAdmin kafkaAdmin) {
         return new KafkaConsumerWrapper(commandLineArgs.kafkaServers, kafkaAdmin.getAllTopics());
+    }
+
+    @Bean(destroyMethod = "close")
+    public KafkaProducerWrapper kafkaProducerWrapper(CommandLineArgs commandLineArgs) {
+        return new KafkaProducerWrapper(commandLineArgs.kafkaServers);
     }
 
     @Bean

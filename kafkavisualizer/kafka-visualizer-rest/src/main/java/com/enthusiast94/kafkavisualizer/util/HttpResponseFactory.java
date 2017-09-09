@@ -18,8 +18,8 @@ public class HttpResponseFactory {
         return Response.serverError().entity(createErrorJsonString(e.getMessage())).build();
     }
 
-    public Response createServerErrorResponse(String errorMessage) {
-        return Response.serverError().entity(createErrorJsonString(errorMessage)).build();
+    public Response createBadRequestResponse(String errorMessage) {
+        return Response.status(Response.Status.BAD_REQUEST).entity(createErrorJsonString(errorMessage)).build();
     }
 
     public Response create404ErrorResponse(String errorMessage) {
