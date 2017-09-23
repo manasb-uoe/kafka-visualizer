@@ -41,7 +41,7 @@ public class KafkaAdmin {
                 throw new DefectException(String.format("Failed to fetch broker data for broker [%s]", brokerId));
             }
             JsonObject json = jsonParser.parse(jsonString).getAsJsonObject();
-            KafkaBroker broker = new KafkaBroker(json.get("host").getAsString(), json.get("port").getAsInt());
+            KafkaBroker broker = new KafkaBroker(brokerId, json.get("host").getAsString(), json.get("port").getAsInt());
             brokersBuilder.add(broker);
         }
 

@@ -14,6 +14,10 @@ public class HttpResponseFactory {
         return Response.ok().entity(gson.toJson(body)).build();
     }
 
+    public Response createNotModifiedResponse() {
+        return Response.notModified().build();
+    }
+
     public Response createServerErrorResponse(Exception e) {
         return Response.serverError().entity(createErrorJsonString(e.getMessage())).build();
     }
@@ -22,7 +26,7 @@ public class HttpResponseFactory {
         return Response.status(Response.Status.BAD_REQUEST).entity(createErrorJsonString(errorMessage)).build();
     }
 
-    public Response create404ErrorResponse(String errorMessage) {
+    public Response createNotFoundResponse(String errorMessage) {
         return Response.status(Response.Status.NOT_FOUND).entity(createErrorJsonString(errorMessage)).build();
     }
 
