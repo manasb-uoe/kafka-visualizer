@@ -1,10 +1,13 @@
 package com.enthusiast94.kafkavisualizer.api;
 
 import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaBroker;
+import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaTopic;
 import com.enthusiast94.kafkavisualizer.service.KafkaAdmin;
 import com.enthusiast94.kafkavisualizer.service.KafkaBrokersTracker;
 import com.enthusiast94.kafkavisualizer.service.KafkaProducerWrapper;
+import com.enthusiast94.kafkavisualizer.service.KafkaTopicsTracker;
 import com.enthusiast94.kafkavisualizer.util.HttpResponseFactory;
+import com.google.common.collect.ImmutableList;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -12,7 +15,6 @@ import org.springframework.stereotype.Component;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.Optional;
-import java.util.Set;
 
 @Component
 @Path("/")
@@ -22,22 +24,25 @@ public class MainResource {
     private final HttpResponseFactory responseFactory;
     private final KafkaProducerWrapper kafkaProducerWrapper;
     private final KafkaBrokersTracker kafkaBrokersTracker;
+    private final KafkaTopicsTracker kafkaTopicsTracker;
     private final KafkaAdmin kafkaAdmin;
 
     public MainResource(HttpResponseFactory responseFactory,
                         KafkaProducerWrapper kafkaProducerWrapper,
                         KafkaBrokersTracker kafkaBrokersTracker,
+                        KafkaTopicsTracker kafkaTopicsTracker,
                         KafkaAdmin kafkaAdmin) {
         this.responseFactory = responseFactory;
         this.kafkaProducerWrapper = kafkaProducerWrapper;
         this.kafkaBrokersTracker = kafkaBrokersTracker;
+        this.kafkaTopicsTracker = kafkaTopicsTracker;
         this.kafkaAdmin = kafkaAdmin;
     }
 
     @GET
     @Path("brokers")
     public Response brokers(@QueryParam("version") long version) {
-        Optional<Set<KafkaBroker>> brokers = kafkaBrokersTracker.getBrokers(version);
+        Optional<ImmutableList<KafkaBroker>> brokers = kafkaBrokersTracker.getBrokers(version);
         if (brokers.isPresent()) {
             return responseFactory.createOkResponse(brokers.get());
         } else {
@@ -45,16 +50,17 @@ public class MainResource {
         }
     }
 
-//    @GET
-//    @Path("topics")
-//    public Response topics() {
-//        try {
-//            return responseFactory.createOkResponse(kafkaAdmin.getAllTopics());
-//        } catch (Exception e) {
-//            return responseFactory.createServerErrorResponse(e);
-//        }
-//    }
-//
+    @GET
+    @Path("topics")
+    public Response topics(@QueryParam("version") long version) {
+        Optional<ImmutableList<KafkaTopic>> topics = kafkaTopicsTracker.getTopics(version);
+        if (topics.isPresent()) {
+            return responseFactory.createOkResponse(topics.get());
+        } else {
+            return responseFactory.createNotModifiedResponse();
+        }
+    }
+
 //    @GET
 //    @Path("/consumers")
 //    public Response consumers() {

@@ -4,41 +4,41 @@ import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaBroker;
 import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaConsumerInfo;
 import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaStatics;
 import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaTopic;
-import com.enthusiast94.kafkavisualizer.util.exception.DefectException;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import kafka.admin.AdminClient;
 import kafka.coordinator.group.GroupOverview;
 import org.I0Itec.zkclient.ZkClient;
-import org.apache.zookeeper.ZooKeeper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import scala.collection.JavaConversions;
 
 import java.time.Duration;
 
 public class KafkaAdmin {
 
+    private static final Logger log = LoggerFactory.getLogger(KafkaAdmin.class);
+
     private final ZkClient zkClient;
-    private final ZooKeeper zooKeeper;
     private final AdminClient adminClient;
     private final JsonParser jsonParser = new JsonParser();
 
-    public KafkaAdmin(ZkClient zkClient, ZooKeeper zooKeeper, AdminClient adminClient) {
+    public KafkaAdmin(ZkClient zkClient, AdminClient adminClient) {
         this.zkClient = zkClient;
-        this.zooKeeper = zooKeeper;
         this.adminClient = adminClient;
     }
 
-    public ImmutableList<KafkaBroker> getAllBrokers() {
+    public ImmutableList<KafkaBroker> getAllBrokers() throws Exception {
         ImmutableList.Builder<KafkaBroker> brokersBuilder = ImmutableList.builder();
         ImmutableList<String> brokerIds = ImmutableList.copyOf(zkClient.getChildren("/brokers/ids"));
 
         for (String brokerId : brokerIds) {
             String jsonString;
             try {
-                jsonString = new String(zooKeeper.getData("/brokers/ids/" + brokerId, false, null));
+                jsonString = zkClient.readData("/brokers/ids/" + brokerId);
             } catch (Exception e) {
-                throw new DefectException(String.format("Failed to fetch broker data for broker [%s]", brokerId));
+                throw new Exception(String.format("Failed to fetch broker data for broker [%s]", brokerId));
             }
             JsonObject json = jsonParser.parse(jsonString).getAsJsonObject();
             KafkaBroker broker = new KafkaBroker(brokerId, json.get("host").getAsString(), json.get("port").getAsInt());

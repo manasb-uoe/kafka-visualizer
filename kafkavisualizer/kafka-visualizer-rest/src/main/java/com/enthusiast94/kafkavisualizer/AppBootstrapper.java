@@ -1,17 +1,20 @@
 package com.enthusiast94.kafkavisualizer;
 
 import com.enthusiast94.kafkavisualizer.domain.CommandLineArgs;
-import com.enthusiast94.kafkavisualizer.service.*;
+import com.enthusiast94.kafkavisualizer.service.KafkaAdmin;
+import com.enthusiast94.kafkavisualizer.service.KafkaBrokersTracker;
+import com.enthusiast94.kafkavisualizer.service.KafkaProducerWrapper;
+import com.enthusiast94.kafkavisualizer.service.KafkaTopicsTracker;
 import com.enthusiast94.kafkavisualizer.util.HttpResponseFactory;
-import com.enthusiast94.kafkavisualizer.util.exception.DefectException;
 import kafka.admin.AdminClient;
 import org.I0Itec.zkclient.ZkClient;
-import org.apache.zookeeper.ZooKeeper;
+import org.I0Itec.zkclient.exception.ZkMarshallingError;
+import org.I0Itec.zkclient.serialize.ZkSerializer;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class AppBootstrapper {
@@ -28,17 +31,29 @@ public class AppBootstrapper {
 
     @Bean(destroyMethod = "close")
     public ZkClient zkClient(CommandLineArgs commandLineArgs) {
-        return new ZkClient(commandLineArgs.zookeeperServers);
+        ZkClient zkClient = new ZkClient(commandLineArgs.zookeeperServers, 10000, 10000, new ZkSerializer() {
+            @Override
+            public byte[] serialize(Object data) throws ZkMarshallingError {
+                return String.valueOf(data).getBytes();
+            }
+
+            @Override
+            public Object deserialize(byte[] bytes) throws ZkMarshallingError {
+                return new String(bytes);
+            }
+        });
+        zkClient.waitUntilConnected(10, TimeUnit.SECONDS);
+        return zkClient;
     }
 
-    @Bean(destroyMethod = "close")
-    public ZooKeeper zooKeeper(CommandLineArgs commandLineArgs) {
-        try {
-            return new ZooKeeper(commandLineArgs.zookeeperServers, Integer.MAX_VALUE, null);
-        } catch (IOException e) {
-            throw new DefectException(e);
-        }
-    }
+//    @Bean(destroyMethod = "close")
+//    public ZooKeeper zooKeeper(CommandLineArgs commandLineArgs) {
+//        try {
+//            return new ZooKeeper(commandLineArgs.zookeeperServers, 10000, null);
+//        } catch (IOException e) {
+//            throw new DefectException(e);
+//        }
+//    }
 
     @Bean(destroyMethod = "close")
     public AdminClient adminClient(CommandLineArgs commandLineArgs) {
@@ -46,8 +61,8 @@ public class AppBootstrapper {
     }
 
     @Bean
-    public KafkaAdmin kafkaAdmin(ZooKeeper zooKeeper, ZkClient zkClient, AdminClient adminClient) {
-        return new KafkaAdmin(zkClient, zooKeeper, adminClient);
+    public KafkaAdmin kafkaAdmin(ZkClient zkClient, AdminClient adminClient) {
+        return new KafkaAdmin(zkClient, adminClient);
     }
 
 //    @Bean(destroyMethod = "close")
@@ -70,9 +85,16 @@ public class AppBootstrapper {
 //    }
 
     @Bean(destroyMethod = "close")
-    public KafkaBrokersTracker kafkaBrokersTracker(ZooKeeper zooKeeper) {
-        KafkaBrokersTracker kafkaBrokersTracker = new KafkaBrokersTracker(zooKeeper);
+    public KafkaBrokersTracker kafkaBrokersTracker(ZkClient zkClient, KafkaAdmin kafkaAdmin) {
+        KafkaBrokersTracker kafkaBrokersTracker = new KafkaBrokersTracker(zkClient);
         kafkaBrokersTracker.start();
         return kafkaBrokersTracker;
+    }
+
+    @Bean(destroyMethod = "close")
+    public KafkaTopicsTracker kafkaTopicsTracker(ZkClient zkClient, KafkaAdmin kafkaAdmin) {
+        KafkaTopicsTracker kafkaTopicsTracker = new KafkaTopicsTracker(zkClient);
+        kafkaTopicsTracker.start();
+        return kafkaTopicsTracker;
     }
 }
