@@ -54,12 +54,12 @@ public class KafkaBrokersTracker implements AutoCloseable {
         });
     }
 
-    public Optional<ImmutableList<KafkaBroker>> getBrokers(long clientVersion) {
+    public Optional<VersionedResponse<ImmutableList<KafkaBroker>>> getBrokers(long clientVersion) {
         if (clientVersion != 0 && clientVersion <= version.get()) {
             return Optional.empty();
         }
 
-        return Optional.of(ImmutableList.copyOf(brokersById.values()));
+        return Optional.of(new VersionedResponse<>(version.get(), ImmutableList.copyOf(brokersById.values())));
     }
 
     private void updateBrokers(Set<String> newBrokerIds) {

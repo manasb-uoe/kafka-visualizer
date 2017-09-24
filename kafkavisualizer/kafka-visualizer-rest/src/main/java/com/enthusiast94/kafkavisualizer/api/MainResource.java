@@ -43,7 +43,7 @@ public class MainResource {
     @GET
     @Path("brokers")
     public Response brokers(@QueryParam("version") long version) {
-        Optional<ImmutableList<KafkaBroker>> brokers = kafkaBrokersTracker.getBrokers(version);
+        Optional<VersionedResponse<ImmutableList<KafkaBroker>>> brokers = kafkaBrokersTracker.getBrokers(version);
         if (brokers.isPresent()) {
             return responseFactory.createOkResponse(brokers.get());
         } else {
@@ -54,7 +54,7 @@ public class MainResource {
     @GET
     @Path("topics")
     public Response topics(@QueryParam("version") long version) {
-        Optional<ImmutableList<KafkaTopic>> topics = kafkaTopicsTracker.getTopics(version);
+        Optional<VersionedResponse<ImmutableList<KafkaTopic>>> topics = kafkaTopicsTracker.getTopics(version);
         if (topics.isPresent()) {
             return responseFactory.createOkResponse(topics.get());
         } else {
@@ -98,7 +98,7 @@ public class MainResource {
                         "[(%s, %s)]", topicName, partition));
             }
 
-            Optional<ImmutableList<ConsumerRecord<String, String>>> records =
+            Optional<VersionedResponse<ImmutableList<ConsumerRecord<String, String>>>> records =
                     kafkaTopicsDataTracker.getRecords(new TopicPartition(topicName, partition), version);
             if (!records.isPresent()){
                 return responseFactory.createNotModifiedResponse();

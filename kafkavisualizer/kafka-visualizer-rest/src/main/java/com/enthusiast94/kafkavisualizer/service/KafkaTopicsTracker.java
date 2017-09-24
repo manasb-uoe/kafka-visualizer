@@ -51,16 +51,12 @@ public class KafkaTopicsTracker implements AutoCloseable {
         });
     }
 
-    public Optional<ImmutableList<KafkaTopic>> getTopics(long clientVersion) {
+    public Optional<VersionedResponse<ImmutableList<KafkaTopic>>> getTopics(long clientVersion) {
         if (clientVersion != 0 && clientVersion <= version.get()) {
             return Optional.empty();
         }
 
-        return Optional.of(ImmutableList.copyOf(topicsByName.values()));
-    }
-
-    public void subscribe(MapChangeListener<String, KafkaTopic> listener) {
-        topicsByName.addListener(listener);
+        return Optional.of(new VersionedResponse<>(version.get(), ImmutableList.copyOf(topicsByName.values())));
     }
 
     private void updateTopics(Set<String> topicNames) {

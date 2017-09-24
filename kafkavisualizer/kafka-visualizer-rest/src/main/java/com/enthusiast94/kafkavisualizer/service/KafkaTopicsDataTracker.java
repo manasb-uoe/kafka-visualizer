@@ -37,7 +37,7 @@ public class KafkaTopicsDataTracker {
         kafkaAllTopicsConsumer.subscribe(this::onMessageConsumed);
     }
 
-    public synchronized Optional<ImmutableList<ConsumerRecord<String, String>>> getRecords(TopicPartition topicPartition, long clientVersion) {
+    public synchronized Optional<VersionedResponse<ImmutableList<ConsumerRecord<String, String>>>> getRecords(TopicPartition topicPartition, long clientVersion) {
         VersionedMessages versionedMessages = messagesByTopicPartition.get(topicPartition);
 
         if (clientVersion != 0 && clientVersion <= versionedMessages.version.get()) {
@@ -45,10 +45,12 @@ public class KafkaTopicsDataTracker {
         }
 
         if (versionedMessages.messages == null) {
-            return Optional.of(ImmutableList.of());
+            return Optional.of(new VersionedResponse<ImmutableList<ConsumerRecord<String, String>>>(
+                    versionedMessages.version.get(), ImmutableList.of()));
         }
 
-        return Optional.of(ImmutableList.copyOf(versionedMessages.messages));
+        return Optional.of(new VersionedResponse<>(versionedMessages.version.get(),
+                ImmutableList.copyOf(versionedMessages.messages)));
     }
 
     private synchronized void onMessageConsumed(ConsumerRecord<String, String> record) {
