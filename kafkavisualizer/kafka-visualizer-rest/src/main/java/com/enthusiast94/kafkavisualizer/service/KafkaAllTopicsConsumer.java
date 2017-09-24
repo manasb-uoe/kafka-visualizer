@@ -1,7 +1,6 @@
 package com.enthusiast94.kafkavisualizer.service;
 
 import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaStatics;
-import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaTopic;
 import com.enthusiast94.kafkavisualizer.util.exception.DefectException;
 import com.google.common.collect.ImmutableList;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
@@ -23,13 +22,10 @@ import java.util.regex.Pattern;
 public class KafkaAllTopicsConsumer implements AutoCloseable {
 
     private final KafkaConsumer<String, String> kafkaConsumer;
-    private final ImmutableList<KafkaTopic> topics;
     private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     private final AtomicBoolean isSubscribed = new AtomicBoolean();
 
-    public KafkaAllTopicsConsumer(String kafkaServersString, ImmutableList<KafkaTopic> topics) {
-        this.topics = topics;
-
+    public KafkaAllTopicsConsumer(String kafkaServersString) {
         Properties properties = new Properties();
         properties.put("bootstrap.servers", kafkaServersString);
         properties.put("group.id", KafkaStatics.GROUP_ID);
