@@ -4,6 +4,7 @@ import {ApiService} from "../services/api.service";
 import {TopicMessage} from "../domain/TopicMessage";
 import {TopicPartition} from "../domain/TopicPartition";
 import {StringUtils} from "../utils/StringUtils";
+import {Subscription} from "rxjs/Subscription";
 
 @Component({
   selector: "topic-data",
@@ -26,7 +27,7 @@ import {StringUtils} from "../utils/StringUtils";
                placeholder="Search" style="margin-top: 10px;">
       </div>
       <div *ngIf="!selectedTopic" class="card-header card-header-title">No Topic Selected</div>
-      <ul *ngIf="filteredTopicMessages.length > 0" class="list-group list-group-flush">
+      <ul *ngIf="!isLoading && filteredTopicMessages.length > 0" class="list-group list-group-flush">
         <collapsible-item *ngFor="let message of filteredTopicMessages">
           <div item-header>
             <span class="text-primary" style="font-weight: bold">[{{message.offset}}]</span> - <span
@@ -59,6 +60,7 @@ export class TopicsDataComponent {
 
   private _selectedTopic: KafkaTopic;
   private _selectedPartition: number;
+  private _currentSubscription: Subscription;
 
   public constructor(private apiService: ApiService) {
   }
@@ -130,7 +132,12 @@ export class TopicsDataComponent {
 
     this.onTopicPartitionSelected.emit(new TopicPartition(this.selectedTopic, this.selectedPartition));
 
-    this.apiService.getTopicData(this.selectedTopic, this.selectedPartition).subscribe(topicMessages => {
+    if (this._currentSubscription) {
+      this._currentSubscription.unsubscribe();
+    }
+
+    this._currentSubscription = this.apiService.getTopicData(this.selectedTopic, this.selectedPartition).subscribe(topicMessages => {
+      this.topicMessages.length = 0;
       topicMessages.forEach(message => this.topicMessages.push(message));
       this.filterTopicMessages();
 

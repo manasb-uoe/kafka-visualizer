@@ -93,14 +93,9 @@ public class MainResource {
                               @PathParam("partition") int partition,
                               @QueryParam("version") long version) {
         try {
-            if (!doesTopicAndPartitionExist(topicName, partition)) {
-                return responseFactory.createNotFoundResponse(String.format("No (topic, partition) pair found for " +
-                        "[(%s, %s)]", topicName, partition));
-            }
-
             Optional<VersionedResponse<ImmutableList<ConsumerRecord<String, String>>>> records =
                     kafkaTopicsDataTracker.getRecords(new TopicPartition(topicName, partition), version);
-            if (!records.isPresent()){
+            if (!records.isPresent()) {
                 return responseFactory.createNotModifiedResponse();
             }
 

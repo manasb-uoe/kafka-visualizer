@@ -52,7 +52,7 @@ public class KafkaTopicsTracker implements AutoCloseable {
     }
 
     public Optional<VersionedResponse<ImmutableList<KafkaTopic>>> getTopics(long clientVersion) {
-        if (clientVersion != 0 && clientVersion <= version.get()) {
+        if (clientVersion != 0 && clientVersion >= version.get()) {
             return Optional.empty();
         }
 

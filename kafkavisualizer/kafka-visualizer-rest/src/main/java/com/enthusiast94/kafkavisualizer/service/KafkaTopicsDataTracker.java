@@ -38,15 +38,14 @@ public class KafkaTopicsDataTracker {
     }
 
     public synchronized Optional<VersionedResponse<ImmutableList<ConsumerRecord<String, String>>>> getRecords(TopicPartition topicPartition, long clientVersion) {
-        VersionedMessages versionedMessages = messagesByTopicPartition.get(topicPartition);
-
-        if (clientVersion != 0 && clientVersion <= versionedMessages.version.get()) {
-            return Optional.empty();
+        if (!messagesByTopicPartition.containsKey(topicPartition)) {
+            return Optional.of(new VersionedResponse<>(0, ImmutableList.of()));
         }
 
-        if (versionedMessages.messages == null) {
-            return Optional.of(new VersionedResponse<ImmutableList<ConsumerRecord<String, String>>>(
-                    versionedMessages.version.get(), ImmutableList.of()));
+        VersionedMessages versionedMessages = messagesByTopicPartition.get(topicPartition);
+
+        if (clientVersion != 0 && clientVersion >= versionedMessages.version.get()) {
+            return Optional.empty();
         }
 
         return Optional.of(new VersionedResponse<>(versionedMessages.version.get(),

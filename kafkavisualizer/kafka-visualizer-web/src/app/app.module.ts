@@ -1,9 +1,8 @@
 import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {BrowserXhr, HttpModule} from "@angular/http";
+import {HttpModule} from "@angular/http";
 import {Ng2BootstrapModule} from "ng-bootstrap";
-import {NgProgressBrowserXhr, NgProgressModule} from "ngx-progressbar";
 import {PrettyJsonModule, SafeJsonPipe} from "angular2-prettyjson";
 import {AppComponent} from "./app.component";
 import {NavbarComponent} from "./components/navbar.component";
@@ -24,7 +23,6 @@ import {TopicPublisherComponent} from "./components/topic-publisher.component";
     HttpModule,
     ReactiveFormsModule,
     Ng2BootstrapModule.forRoot(),
-    NgProgressModule,
     PrettyJsonModule
   ],
   declarations: [
@@ -40,7 +38,6 @@ import {TopicPublisherComponent} from "./components/topic-publisher.component";
   ],
   providers: [
     ApiService,
-    {provide: BrowserXhr, useClass: NgProgressBrowserXhr},
     {provide: JsonPipe, useClass: SafeJsonPipe}
   ],
   bootstrap: [AppComponent],
