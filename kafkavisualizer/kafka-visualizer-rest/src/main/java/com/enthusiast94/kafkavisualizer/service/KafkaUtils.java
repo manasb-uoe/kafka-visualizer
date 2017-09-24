@@ -16,15 +16,15 @@ import scala.collection.JavaConversions;
 
 import java.time.Duration;
 
-public class KafkaAdmin {
+public class KafkaUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(KafkaAdmin.class);
+    private static final Logger log = LoggerFactory.getLogger(KafkaUtils.class);
 
     private final ZkClient zkClient;
     private final AdminClient adminClient;
     private final JsonParser jsonParser = new JsonParser();
 
-    public KafkaAdmin(ZkClient zkClient, AdminClient adminClient) {
+    public KafkaUtils(ZkClient zkClient, AdminClient adminClient) {
         this.zkClient = zkClient;
         this.adminClient = adminClient;
     }

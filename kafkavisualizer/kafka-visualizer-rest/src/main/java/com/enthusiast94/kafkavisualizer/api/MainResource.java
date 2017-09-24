@@ -2,7 +2,7 @@ package com.enthusiast94.kafkavisualizer.api;
 
 import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaBroker;
 import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaTopic;
-import com.enthusiast94.kafkavisualizer.service.KafkaAdmin;
+import com.enthusiast94.kafkavisualizer.service.KafkaUtils;
 import com.enthusiast94.kafkavisualizer.service.KafkaBrokersTracker;
 import com.enthusiast94.kafkavisualizer.service.KafkaProducerWrapper;
 import com.enthusiast94.kafkavisualizer.service.KafkaTopicsTracker;
@@ -25,18 +25,18 @@ public class MainResource {
     private final KafkaProducerWrapper kafkaProducerWrapper;
     private final KafkaBrokersTracker kafkaBrokersTracker;
     private final KafkaTopicsTracker kafkaTopicsTracker;
-    private final KafkaAdmin kafkaAdmin;
+    private final KafkaUtils kafkaUtils;
 
     public MainResource(HttpResponseFactory responseFactory,
                         KafkaProducerWrapper kafkaProducerWrapper,
                         KafkaBrokersTracker kafkaBrokersTracker,
                         KafkaTopicsTracker kafkaTopicsTracker,
-                        KafkaAdmin kafkaAdmin) {
+                        KafkaUtils kafkaUtils) {
         this.responseFactory = responseFactory;
         this.kafkaProducerWrapper = kafkaProducerWrapper;
         this.kafkaBrokersTracker = kafkaBrokersTracker;
         this.kafkaTopicsTracker = kafkaTopicsTracker;
-        this.kafkaAdmin = kafkaAdmin;
+        this.kafkaUtils = kafkaUtils;
     }
 
     @GET
@@ -65,7 +65,7 @@ public class MainResource {
 //    @Path("/consumers")
 //    public Response consumers() {
 //        try {
-//            return responseFactory.createOkResponse(kafkaAdmin.getAllConsumers());
+//            return responseFactory.createOkResponse(kafkaUtils.getAllConsumers());
 //        } catch (Exception e) {
 //            return responseFactory.createServerErrorResponse(e);
 //        }
@@ -80,7 +80,7 @@ public class MainResource {
 //                        "[(%s, %s)]", topicName, partition));
 //            }
 //
-//            return responseFactory.createOkResponse(kafkaAdmin.getConsumersForTopic(topicName, partition));
+//            return responseFactory.createOkResponse(kafkaUtils.getConsumersForTopic(topicName, partition));
 //        } catch (Exception e) {
 //            return responseFactory.createServerErrorResponse(e);
 //        }
@@ -124,12 +124,12 @@ public class MainResource {
     }
 
 //    private boolean doesTopicAndPartitionExist(String topicName, int partition) {
-//        return kafkaAdmin.getAllTopics().stream()
+//        return kafkaUtils.getAllTopics().stream()
 //                .anyMatch(topic -> topic.name.equals(topicName) && partition < topic.numPartitions);
 //    }
 
     private boolean doesTopicExist(String topicName) {
-        return kafkaAdmin.getAllTopics().stream()
+        return kafkaUtils.getAllTopics().stream()
                 .anyMatch(topic -> topic.name.equals(topicName));
     }
 }

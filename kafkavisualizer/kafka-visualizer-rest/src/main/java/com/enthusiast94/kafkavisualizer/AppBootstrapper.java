@@ -1,7 +1,7 @@
 package com.enthusiast94.kafkavisualizer;
 
 import com.enthusiast94.kafkavisualizer.domain.CommandLineArgs;
-import com.enthusiast94.kafkavisualizer.service.KafkaAdmin;
+import com.enthusiast94.kafkavisualizer.service.KafkaUtils;
 import com.enthusiast94.kafkavisualizer.service.KafkaBrokersTracker;
 import com.enthusiast94.kafkavisualizer.service.KafkaProducerWrapper;
 import com.enthusiast94.kafkavisualizer.service.KafkaTopicsTracker;
@@ -61,12 +61,12 @@ public class AppBootstrapper {
     }
 
     @Bean
-    public KafkaAdmin kafkaAdmin(ZkClient zkClient, AdminClient adminClient) {
-        return new KafkaAdmin(zkClient, adminClient);
+    public KafkaUtils kafkaAdmin(ZkClient zkClient, AdminClient adminClient) {
+        return new KafkaUtils(zkClient, adminClient);
     }
 
 //    @Bean(destroyMethod = "close")
-//    public KafkaConsumerWrapper kafkaConsumerWrapper(CommandLineArgs commandLineArgs, KafkaAdmin kafkaAdmin) {
+//    public KafkaConsumerWrapper kafkaConsumerWrapper(CommandLineArgs commandLineArgs, KafkaUtils kafkaAdmin) {
 //        return new KafkaConsumerWrapper(commandLineArgs.kafkaServers, kafkaAdmin.getAllTopics());
 //    }
 
@@ -85,14 +85,14 @@ public class AppBootstrapper {
 //    }
 
     @Bean(destroyMethod = "close")
-    public KafkaBrokersTracker kafkaBrokersTracker(ZkClient zkClient, KafkaAdmin kafkaAdmin) {
+    public KafkaBrokersTracker kafkaBrokersTracker(ZkClient zkClient, KafkaUtils kafkaUtils) {
         KafkaBrokersTracker kafkaBrokersTracker = new KafkaBrokersTracker(zkClient);
         kafkaBrokersTracker.start();
         return kafkaBrokersTracker;
     }
 
     @Bean(destroyMethod = "close")
-    public KafkaTopicsTracker kafkaTopicsTracker(ZkClient zkClient, KafkaAdmin kafkaAdmin) {
+    public KafkaTopicsTracker kafkaTopicsTracker(ZkClient zkClient, KafkaUtils kafkaUtils) {
         KafkaTopicsTracker kafkaTopicsTracker = new KafkaTopicsTracker(zkClient);
         kafkaTopicsTracker.start();
         return kafkaTopicsTracker;
