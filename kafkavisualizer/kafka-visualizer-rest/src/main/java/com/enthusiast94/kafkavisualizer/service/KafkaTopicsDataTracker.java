@@ -21,9 +21,8 @@ public class KafkaTopicsDataTracker {
 
     private final KafkaAllTopicsConsumer kafkaAllTopicsConsumer;
     private final int maxTopicMessagesCount;
-    private final Map<TopicPartition, LinkedList<ConsumerRecord<String, String>>> consumedMessagesMap = new HashMap<>();
+    private final Map<TopicPartition, VersionedMessages> messagesByTopicPartition = new HashMap<>();
     private final AtomicBoolean started = new AtomicBoolean();
-    private final AtomicLong version = new AtomicLong();
 
     public KafkaTopicsDataTracker(KafkaAllTopicsConsumer kafkaAllTopicsConsumer, int maxTopicMessagesCount) {
         this.kafkaAllTopicsConsumer = kafkaAllTopicsConsumer;
@@ -39,17 +38,17 @@ public class KafkaTopicsDataTracker {
     }
 
     public synchronized Optional<ImmutableList<ConsumerRecord<String, String>>> getRecords(TopicPartition topicPartition, long clientVersion) {
-        if (clientVersion != 0 && clientVersion <= version.get()) {
-            return Optional.empty();
+        VersionedMessages versionedMessages = messagesByTopicPartition.get(topicPartition);
 
+        if (clientVersion != 0 && clientVersion <= versionedMessages.version.get()) {
+            return Optional.empty();
         }
 
-        LinkedList<ConsumerRecord<String, String>> messages = consumedMessagesMap.get(topicPartition);
-        if (messages == null) {
+        if (versionedMessages.messages == null) {
             return Optional.of(ImmutableList.of());
         }
 
-        return Optional.of(ImmutableList.copyOf(messages));
+        return Optional.of(ImmutableList.copyOf(versionedMessages.messages));
     }
 
     private synchronized void onMessageConsumed(ConsumerRecord<String, String> record) {
@@ -57,17 +56,27 @@ public class KafkaTopicsDataTracker {
 
         TopicPartition topicPartition = new TopicPartition(record.topic(), record.partition());
 
-        if (!consumedMessagesMap.containsKey(topicPartition)) {
-            consumedMessagesMap.put(topicPartition, Lists.newLinkedList());
+        if (!messagesByTopicPartition.containsKey(topicPartition)) {
+            messagesByTopicPartition.put(topicPartition, new VersionedMessages(Lists.newLinkedList()));
         }
 
-        LinkedList<ConsumerRecord<String, String>> messages = consumedMessagesMap.get(topicPartition);
+        VersionedMessages versionedMessages = messagesByTopicPartition.get(topicPartition);
+        LinkedList<ConsumerRecord<String, String>> messages = versionedMessages.messages;
         messages.addFirst(record);
 
         if (messages.size() > maxTopicMessagesCount) {
             messages.removeLast();
         }
 
-        version.incrementAndGet();
+        versionedMessages.version.incrementAndGet();
+    }
+
+    private static class VersionedMessages {
+        final AtomicLong version = new AtomicLong();
+        final LinkedList<ConsumerRecord<String, String>> messages;
+
+        private VersionedMessages(LinkedList<ConsumerRecord<String, String>> messages) {
+            this.messages = messages;
+        }
     }
 }
