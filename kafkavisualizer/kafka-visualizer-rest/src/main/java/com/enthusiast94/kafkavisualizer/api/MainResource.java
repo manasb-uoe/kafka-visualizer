@@ -2,13 +2,12 @@ package com.enthusiast94.kafkavisualizer.api;
 
 import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaBroker;
 import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaTopic;
-import com.enthusiast94.kafkavisualizer.service.KafkaUtils;
-import com.enthusiast94.kafkavisualizer.service.KafkaBrokersTracker;
-import com.enthusiast94.kafkavisualizer.service.KafkaProducerWrapper;
-import com.enthusiast94.kafkavisualizer.service.KafkaTopicsTracker;
+import com.enthusiast94.kafkavisualizer.service.*;
 import com.enthusiast94.kafkavisualizer.util.HttpResponseFactory;
 import com.google.common.collect.ImmutableList;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.TopicPartition;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
@@ -25,17 +24,19 @@ public class MainResource {
     private final KafkaProducerWrapper kafkaProducerWrapper;
     private final KafkaBrokersTracker kafkaBrokersTracker;
     private final KafkaTopicsTracker kafkaTopicsTracker;
+    private final KafkaTopicsDataTracker kafkaTopicsDataTracker;
     private final KafkaUtils kafkaUtils;
 
     public MainResource(HttpResponseFactory responseFactory,
                         KafkaProducerWrapper kafkaProducerWrapper,
                         KafkaBrokersTracker kafkaBrokersTracker,
                         KafkaTopicsTracker kafkaTopicsTracker,
-                        KafkaUtils kafkaUtils) {
+                        KafkaTopicsDataTracker kafkaTopicsDataTracker, KafkaUtils kafkaUtils) {
         this.responseFactory = responseFactory;
         this.kafkaProducerWrapper = kafkaProducerWrapper;
         this.kafkaBrokersTracker = kafkaBrokersTracker;
         this.kafkaTopicsTracker = kafkaTopicsTracker;
+        this.kafkaTopicsDataTracker = kafkaTopicsDataTracker;
         this.kafkaUtils = kafkaUtils;
     }
 
@@ -61,45 +62,53 @@ public class MainResource {
         }
     }
 
-//    @GET
-//    @Path("/consumers")
-//    public Response consumers() {
-//        try {
-//            return responseFactory.createOkResponse(kafkaUtils.getAllConsumers());
-//        } catch (Exception e) {
-//            return responseFactory.createServerErrorResponse(e);
-//        }
-//    }
-//
-//    @GET
-//    @Path("/consumers/{topicName}/{partition}")
-//    public Response consumersForTopic(@PathParam("topicName") String topicName, @PathParam("partition") int partition) {
-//        try {
-//            if (!doesTopicAndPartitionExist(topicName, partition)) {
-//                return responseFactory.createNotFoundResponse(String.format("No (topic, partition) pair found for " +
-//                        "[(%s, %s)]", topicName, partition));
-//            }
-//
-//            return responseFactory.createOkResponse(kafkaUtils.getConsumersForTopic(topicName, partition));
-//        } catch (Exception e) {
-//            return responseFactory.createServerErrorResponse(e);
-//        }
-//    }
-//
-//    @GET
-//    @Path("/topics/{topicName}/{partition}")
-//    public Response topicData(@PathParam("topicName") String topicName, @PathParam("partition") int partition) {
-//        try {
-//            if (!doesTopicAndPartitionExist(topicName, partition)) {
-//                return responseFactory.createNotFoundResponse(String.format("No (topic, partition) pair found for " +
-//                        "[(%s, %s)]", topicName, partition));
-//            }
-//
-//            return responseFactory.createOkResponse(kafkaTopicsDataTracker.getRecords(new TopicPartition(topicName, partition)));
-//        } catch (Exception e) {
-//            return responseFactory.createServerErrorResponse(e);
-//        }
-//    }
+    @GET
+    @Path("/consumers")
+    public Response consumers() {
+        try {
+            return responseFactory.createOkResponse(kafkaUtils.getAllConsumers());
+        } catch (Exception e) {
+            return responseFactory.createServerErrorResponse(e);
+        }
+    }
+
+    @GET
+    @Path("/consumers/{topicName}/{partition}")
+    public Response consumersForTopic(@PathParam("topicName") String topicName, @PathParam("partition") int partition) {
+        try {
+            if (!doesTopicAndPartitionExist(topicName, partition)) {
+                return responseFactory.createNotFoundResponse(String.format("No (topic, partition) pair found for " +
+                        "[(%s, %s)]", topicName, partition));
+            }
+
+            return responseFactory.createOkResponse(kafkaUtils.getConsumersForTopic(topicName, partition));
+        } catch (Exception e) {
+            return responseFactory.createServerErrorResponse(e);
+        }
+    }
+
+    @GET
+    @Path("/topics/{topicName}/{partition}")
+    public Response topicData(@PathParam("topicName") String topicName,
+                              @PathParam("partition") int partition,
+                              @QueryParam("version") long version) {
+        try {
+            if (!doesTopicAndPartitionExist(topicName, partition)) {
+                return responseFactory.createNotFoundResponse(String.format("No (topic, partition) pair found for " +
+                        "[(%s, %s)]", topicName, partition));
+            }
+
+            Optional<ImmutableList<ConsumerRecord<String, String>>> records =
+                    kafkaTopicsDataTracker.getRecords(new TopicPartition(topicName, partition), version);
+            if (!records.isPresent()){
+                return responseFactory.createNotModifiedResponse();
+            }
+
+            return responseFactory.createOkResponse(records.get());
+        } catch (Exception e) {
+            return responseFactory.createServerErrorResponse(e);
+        }
+    }
 
     @POST
     @Path("/topics/{topicName}")
@@ -123,10 +132,10 @@ public class MainResource {
         }
     }
 
-//    private boolean doesTopicAndPartitionExist(String topicName, int partition) {
-//        return kafkaUtils.getAllTopics().stream()
-//                .anyMatch(topic -> topic.name.equals(topicName) && partition < topic.numPartitions);
-//    }
+    private boolean doesTopicAndPartitionExist(String topicName, int partition) {
+        return kafkaUtils.getAllTopics().stream()
+                .anyMatch(topic -> topic.name.equals(topicName) && partition < topic.numPartitions);
+    }
 
     private boolean doesTopicExist(String topicName) {
         return kafkaUtils.getAllTopics().stream()

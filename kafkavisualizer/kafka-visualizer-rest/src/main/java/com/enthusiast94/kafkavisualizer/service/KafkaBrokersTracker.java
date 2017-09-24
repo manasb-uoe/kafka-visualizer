@@ -40,11 +40,9 @@ public class KafkaBrokersTracker implements AutoCloseable {
     }
 
     public void start() {
-        if (started.get()) {
+        if (!started.compareAndSet(false, true)) {
             throw new DefectException("Can only be started once!");
         }
-
-        started.set(true);
 
         brokersById.addListener((MapChangeListener<String, KafkaBroker>) change -> version.incrementAndGet());
         zkClient.waitUntilExists("/brokers", TimeUnit.SECONDS, 10);

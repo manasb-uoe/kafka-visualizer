@@ -37,11 +37,9 @@ public class KafkaTopicsTracker implements AutoCloseable {
     }
 
     public void start() {
-        if (started.get()) {
+        if (!started.compareAndSet(false, true)) {
             throw new DefectException("Can only be started once!");
         }
-
-        started.set(true);
 
         topicsByName.addListener((MapChangeListener<String, KafkaTopic>) change -> version.incrementAndGet());
         zkClient.waitUntilExists("/brokers", TimeUnit.SECONDS, 10);
@@ -59,6 +57,10 @@ public class KafkaTopicsTracker implements AutoCloseable {
         }
 
         return Optional.of(ImmutableList.copyOf(topicsByName.values()));
+    }
+
+    public void subscribe(MapChangeListener<String, KafkaTopic> listener) {
+        topicsByName.addListener(listener);
     }
 
     private void updateTopics(Set<String> topicNames) {

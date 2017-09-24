@@ -1,10 +1,7 @@
 package com.enthusiast94.kafkavisualizer;
 
 import com.enthusiast94.kafkavisualizer.domain.CommandLineArgs;
-import com.enthusiast94.kafkavisualizer.service.KafkaUtils;
-import com.enthusiast94.kafkavisualizer.service.KafkaBrokersTracker;
-import com.enthusiast94.kafkavisualizer.service.KafkaProducerWrapper;
-import com.enthusiast94.kafkavisualizer.service.KafkaTopicsTracker;
+import com.enthusiast94.kafkavisualizer.service.*;
 import com.enthusiast94.kafkavisualizer.util.HttpResponseFactory;
 import kafka.admin.AdminClient;
 import org.I0Itec.zkclient.ZkClient;
@@ -46,15 +43,6 @@ public class AppBootstrapper {
         return zkClient;
     }
 
-//    @Bean(destroyMethod = "close")
-//    public ZooKeeper zooKeeper(CommandLineArgs commandLineArgs) {
-//        try {
-//            return new ZooKeeper(commandLineArgs.zookeeperServers, 10000, null);
-//        } catch (IOException e) {
-//            throw new DefectException(e);
-//        }
-//    }
-
     @Bean(destroyMethod = "close")
     public AdminClient adminClient(CommandLineArgs commandLineArgs) {
         return AdminClient.createSimplePlaintext(commandLineArgs.kafkaServers);
@@ -65,24 +53,25 @@ public class AppBootstrapper {
         return new KafkaUtils(zkClient, adminClient);
     }
 
-//    @Bean(destroyMethod = "close")
-//    public KafkaConsumerWrapper kafkaConsumerWrapper(CommandLineArgs commandLineArgs, KafkaUtils kafkaAdmin) {
-//        return new KafkaConsumerWrapper(commandLineArgs.kafkaServers, kafkaAdmin.getAllTopics());
-//    }
+    @Bean(destroyMethod = "close")
+    public KafkaAllTopicsConsumer kafkaConsumerWrapper(CommandLineArgs commandLineArgs, KafkaUtils kafkaAdmin) {
+        return new KafkaAllTopicsConsumer(commandLineArgs.kafkaServers, kafkaAdmin.getAllTopics());
+    }
 
     @Bean(destroyMethod = "close")
     public KafkaProducerWrapper kafkaProducerWrapper(CommandLineArgs commandLineArgs) {
         return new KafkaProducerWrapper(commandLineArgs.kafkaServers);
     }
 
-//    @Bean
-//    public KafkaTopicsDataTracker kafkaTopicsDataTracker(KafkaConsumerWrapper kafkaConsumerWrapper,
-//                                                         CommandLineArgs commandLineArgs) {
-//        KafkaTopicsDataTracker kafkaTopicsDataTracker =
-//                new KafkaTopicsDataTracker(kafkaConsumerWrapper, commandLineArgs.maxTopicMessagesCount);
-//        kafkaTopicsDataTracker.start();
-//        return kafkaTopicsDataTracker;
-//    }
+    @Bean
+    public KafkaTopicsDataTracker kafkaTopicsDataTracker(KafkaAllTopicsConsumer kafkaAllTopicsConsumer,
+                                                         KafkaTopicsTracker kafkaTopicsTracker,
+                                                         CommandLineArgs commandLineArgs) {
+        KafkaTopicsDataTracker kafkaTopicsDataTracker =
+                new KafkaTopicsDataTracker(kafkaAllTopicsConsumer, commandLineArgs.maxTopicMessagesCount);
+        kafkaTopicsDataTracker.start();
+        return kafkaTopicsDataTracker;
+    }
 
     @Bean(destroyMethod = "close")
     public KafkaBrokersTracker kafkaBrokersTracker(ZkClient zkClient, KafkaUtils kafkaUtils) {
