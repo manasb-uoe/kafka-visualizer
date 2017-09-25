@@ -3,39 +3,40 @@ import {KafkaBroker} from "../domain/KafkaBroker";
 import {ApiService} from "../services/api.service";
 
 @Component({
-    selector: "brokers",
-    template: `
-        <div class="card">
-            <div class="card-header card-header-title">Registered Brokers</div>
-
-            <ul ng-if="!isLoading" class="list-group list-group-flush">
-                <li *ngFor="let broker of brokers" class="list-group-item">
-                    <span><span class="text-danger">Hostname: </span> {{broker.hostname}} - <span class="text-danger">Port: </span> {{broker.port}}</span>
-                </li>
-            </ul>
-
-            <div *ngIf="!isLoading && brokers.length === 0" class="card-body">No brokers found</div>
-
-            <div *ngIf="isLoading" class="card-body">Loading...</div>
+  selector: "brokers",
+  template: `
+    <div class="sidebarHeader">Brokers</div>
+    
+    <div *ngIf="!isLoading">
+      <div *ngFor="let broker of brokers" class="sidebarListItem">
+        <div>
+          <i class="fa fa-server" aria-hidden="true"></i>
+          <span style="padding-left: 10px;">{{broker.hostname}}<span style="padding-left: 3px; padding-right: 3px;">:</span><span class="text-danger">{{broker.port}}</span></span>
         </div>
-    `
+        <div class="text-primary" style="align-self: flex-end">{{broker.id}}</div>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading && brokers.length === 0" class="sidebarListItem">No brokers found</div>
+    <div *ngIf="isLoading" class="sidebarListItem">Loading...</div>
+  `
 })
 export class BrokersComponent implements OnInit {
-    public readonly brokers: Array<KafkaBroker> = [];
+  public readonly brokers: Array<KafkaBroker> = [];
 
-    public isLoading: boolean;
+  public isLoading: boolean;
 
-    public constructor(private apiService: ApiService) {
-    }
+  public constructor(private apiService: ApiService) {
+  }
 
-    public ngOnInit(): void {
-        this.isLoading = true;
+  public ngOnInit(): void {
+    this.isLoading = true;
 
-        this.apiService.getBrokers().subscribe(brokers => {
-            this.isLoading = false;
+    this.apiService.getBrokers().subscribe(brokers => {
+      this.isLoading = false;
 
-            this.brokers.length = 0;
-            brokers.forEach(broker => this.brokers.push(broker));
-        });
-    }
+      this.brokers.length = 0;
+      brokers.forEach(broker => this.brokers.push(broker));
+    });
+  }
 }

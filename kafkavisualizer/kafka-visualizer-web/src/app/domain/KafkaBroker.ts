@@ -1,4 +1,5 @@
 export class KafkaBroker {
-    public hostname: string;
-    public port: number;
+  public id: number;
+  public hostname: string;
+  public port: number;
 }

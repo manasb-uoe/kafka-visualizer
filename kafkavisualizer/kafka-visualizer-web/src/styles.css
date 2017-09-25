@@ -15,12 +15,31 @@ body {
   background-color: rgba(0, 0, 0, .1) !important;
 }
 
-.card-header, .list-group-item, .card-body {
-  padding: .50rem 1rem !important;
+.sidebar {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  position: fixed !important;
+  top: 56px;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border-right: 1px solid #eee;
 }
 
-.card-header-title {
-  font-weight: 600;
+.sidebarHeader {
+  text-transform: capitalize;
+  background-color: #f1f1f1;
+  padding: 7px 15px;
+  font-weight: bold;
+}
+
+.sidebarListItem {
+  padding: 7px 15px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 /* angular2-prettyjson styles */
