@@ -46,6 +46,14 @@ body {
   justify-content: space-between;
 }
 
+.pageHeaderContainer {
+  padding-top: 15px; padding-bottom: 5px; border-bottom: 4px solid var(--borderColor);
+}
+
+.pageHeader {
+  font-weight: 400;
+}
+
 /* angular2-prettyjson styles */
 
 pre span {

@@ -20,27 +20,14 @@ import {Component} from "@angular/core";
       <!--</div>-->
     <!--</div>-->
 
-    <!--<div class="row" style="margin-top: 30px">-->
-      <!--<div class="col-md-3">-->
-        <!--<brokers></brokers>-->
-        <!--<br>-->
-        <!--<topics-list (onTopicSelected)="topicDataComponent.selectedTopic = $event; topicPublisherComponent.selectedTopic = $event"></topics-list>-->
-      <!--</div>-->
-      <!--<div class="col-md-6">-->
-        <!--<topic-data #topicDataComponent-->
-                    <!--(onTopicPartitionSelected)="topicConsumersComponent.selectedTopicPartition = $event"></topic-data>-->
-      <!--</div>-->
-      <!--<div class="col-md-3">-->
-        <!--<topic-consumers #topicConsumersComponent></topic-consumers>-->
-        <!--<br>-->
-        <!--<topic-publisher #topicPublisherComponent></topic-publisher>-->
-      <!--</div>-->
-    <!--</div>-->
-
     <div class="row">
       <div class="col-3 sidebar">
         <brokers></brokers>
-        <topics-list></topics-list>
+        <topics-list (onTopicSelected)="topicDataComponent.selectedTopic = $event"></topics-list>
+      </div>
+      
+      <div class="col-9 ml-auto">
+        <topic-data #topicDataComponent></topic-data>
       </div>
     </div>
     

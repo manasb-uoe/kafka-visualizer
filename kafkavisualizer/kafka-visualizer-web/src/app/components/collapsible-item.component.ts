@@ -1,21 +1,26 @@
 import {Component} from "@angular/core";
 
 @Component({
-    selector: "collapsible-item",
-    template: `
-        <li (click)="toggleBodyVisibility()" class="list-group-item selectable pointable">
-            <div>
-                <ng-content select="[item-header]"></ng-content>
-            </div>
-            <hr *ngIf="isBodyVisible">
-            <ng-content *ngIf="isBodyVisible" select="[item-body]"></ng-content>
-        </li>
-    `
+  selector: "collapsible-item",
+  template: `
+    <li class="list-group-item"
+        style="padding: 0; margin-bottom: 0 !important; border-radius: 0 !important; border-bottom: 0 !important; ">
+      <div (click)="toggleBodyVisibility()" class="selectable pointable" style="padding: 10px;">
+        <ng-content select="[item-header]"></ng-content>
+      </div>
+      
+      <hr *ngIf="isBodyVisible" style="margin-top: 0; margin-bottom: 0px;">
+      
+      <div *ngIf="isBodyVisible" style="padding: 10px;">
+        <ng-content select="[item-body]"></ng-content>
+      </div>
+    </li>
+  `
 })
 export class CollapsibleItemComponent {
-    public isBodyVisible: boolean;
+  public isBodyVisible: boolean;
 
-    public toggleBodyVisibility(): void {
-        this.isBodyVisible = !this.isBodyVisible;
-    }
+  public toggleBodyVisibility(): void {
+    this.isBodyVisible = !this.isBodyVisible;
+  }
 }

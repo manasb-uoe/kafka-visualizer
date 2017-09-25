@@ -9,12 +9,11 @@ import {Subscription} from "rxjs/Subscription";
 @Component({
   selector: "topic-data",
   template: `
-    <div class="card">
-      <div *ngIf="selectedTopic" class="card-header">
-        <div style="display: flex; align-items: center; justify-content: space-between; flex-direction: row">
-          <div class="card-header-title" style="margin-bottom: 0;">
-            Showing messages for <span class="text-primary">{{selectedTopic.name}}</span>
-          </div>
+    <div *ngIf="selectedTopic">
+      <div class="pageHeaderContainer">
+        <h6 class="pageHeader"
+            style="display: flex; align-items: center; justify-content: space-between; flex-direction: row">
+          <div>Showing messages for <span class="text-primary">{{selectedTopic.name}}</span></div>
           <div style="align-self: flex-end">
             <div style="padding-right: 10px; display: inline;">Partition:</div>
             <select [(ngModel)]="selectedPartition" style="display: inline; width: 100px;"
@@ -22,12 +21,13 @@ import {Subscription} from "rxjs/Subscription";
               <option *ngFor="let partition of getPartitionsList()">{{partition}}</option>
             </select>
           </div>
-        </div>
-        <input [ngModel]="searchTerm" (ngModelChange)="onSearchTermChanged($event)" class="form-control form-control-sm"
-               placeholder="Search" style="margin-top: 10px;">
+        </h6>
       </div>
-      <div *ngIf="!selectedTopic" class="card-header card-header-title">No Topic Selected</div>
-      <ul *ngIf="!isLoading && filteredTopicMessages.length > 0" class="list-group list-group-flush">
+
+      <input [ngModel]="searchTerm" (ngModelChange)="onSearchTermChanged($event)" class="form-control form-control-sm"
+             placeholder="Search" style="margin-top: 10px; margin-bottom: 10px;">
+
+      <ul *ngIf="!isLoading && filteredTopicMessages.length > 0" class="list-group">
         <collapsible-item *ngFor="let message of filteredTopicMessages">
           <div item-header>
             <span class="text-primary" style="font-weight: bold">[{{message.offset}}]</span> - <span
@@ -39,13 +39,48 @@ import {Subscription} from "rxjs/Subscription";
           </div>
         </collapsible-item>
       </ul>
-      <div *ngIf="selectedTopic && filteredTopicMessages.length == 0 && !isLoading" class="card-body">
-        <div>No messages found</div>
-      </div>
-      <div *ngIf="isLoading" class="card-body">
-        <div>Loading...</div>
-      </div>
+
+      <div *ngIf="filteredTopicMessages.length == 0 && !isLoading" style="margin-top: 10px;">No messages found</div>
+      <div *ngIf="isLoading" style="margin-top: 10px;">Loading...</div>
     </div>
+
+    <!--<div class="card">-->
+    <!--<div *ngIf="selectedTopic" class="card-header">-->
+    <!--<div style="display: flex; align-items: center; justify-content: space-between; flex-direction: row">-->
+    <!--<div class="card-header-title" style="margin-bottom: 0;">-->
+    <!--Showing messages for <span class="text-primary">{{selectedTopic.name}}</span>-->
+    <!--</div>-->
+    <!--<div style="align-self: flex-end">-->
+    <!--<div style="padding-right: 10px; display: inline;">Partition:</div>-->
+    <!--<select [(ngModel)]="selectedPartition" style="display: inline; width: 100px;"-->
+    <!--class="form-control form-control-sm">-->
+    <!--<option *ngFor="let partition of getPartitionsList()">{{partition}}</option>-->
+    <!--</select>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--<input [ngModel]="searchTerm" (ngModelChange)="onSearchTermChanged($event)" class="form-control form-control-sm"-->
+    <!--placeholder="Search" style="margin-top: 10px;">-->
+    <!--</div>-->
+    <!--<div *ngIf="!selectedTopic" class="card-header card-header-title">No Topic Selected</div>-->
+    <!--<ul *ngIf="!isLoading && filteredTopicMessages.length > 0" class="list-group list-group-flush">-->
+    <!--<collapsible-item *ngFor="let message of filteredTopicMessages">-->
+    <!--<div item-header>-->
+    <!--<span class="text-primary" style="font-weight: bold">[{{message.offset}}]</span> - <span-->
+    <!--class="text-success">{{message.timestamp | date:'dd MMM yyyy HH:mm'}}</span>-->
+    <!--<div [innerHtml]="markSearchTermInString(message.value)"></div>-->
+    <!--</div>-->
+    <!--<div item-body>-->
+    <!--<pre [innerHtml]="tryParseJson(message.value) | prettyjson:2"></pre>-->
+    <!--</div>-->
+    <!--</collapsible-item>-->
+    <!--</ul>-->
+    <!--<div *ngIf="selectedTopic && filteredTopicMessages.length == 0 && !isLoading" class="card-body">-->
+    <!--<div>No messages found</div>-->
+    <!--</div>-->
+    <!--<div *ngIf="isLoading" class="card-body">-->
+    <!--<div>Loading...</div>-->
+    <!--</div>-->
+    <!--</div>-->
   `,
   styles: [`
   `]
