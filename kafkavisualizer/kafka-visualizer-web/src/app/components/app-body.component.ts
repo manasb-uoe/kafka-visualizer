@@ -40,6 +40,7 @@ import {Component} from "@angular/core";
     <div class="row">
       <div class="col-3 sidebar">
         <brokers></brokers>
+        <topics-list></topics-list>
       </div>
     </div>
     

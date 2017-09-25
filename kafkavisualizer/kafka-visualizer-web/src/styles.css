@@ -3,6 +3,10 @@ body {
   font-size: 90% !important;
 }
 
+:root {
+  --borderColor: #eee;
+}
+
 .pointable {
   cursor: pointer;
 }
@@ -25,7 +29,7 @@ body {
   z-index: 1000;
   overflow-x: hidden;
   overflow-y: auto;
-  border-right: 1px solid #eee;
+  border-right: 1px solid var(--borderColor);
 }
 
 .sidebarHeader {
