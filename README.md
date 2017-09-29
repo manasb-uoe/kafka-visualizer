@@ -1,4 +1,4 @@
-## Kafka Visualizer
+# Kafka Visualizer
 A web client for visualizing your Kafka cluster. Developed using **Spring Boot**, **Angular 4** and **Bootstrap 4**.
 
 ## How to build?
