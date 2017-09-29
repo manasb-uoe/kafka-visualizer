@@ -23,4 +23,4 @@ Run the executable jar using the following command and then navigate to `localho
 
 ### Screenshots 
 
-![Screenshot](https://github.com/enthusiast94/kafka-visualizer/blob/master/screenshot.png)
+![Screenshot](https://github.com/enthusiast94/kafka-visualizer/blob/master/screenshot_1.png)
