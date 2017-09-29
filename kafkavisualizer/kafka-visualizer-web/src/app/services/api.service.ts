@@ -7,73 +7,78 @@ import {Consumer} from "../domain/Consumer";
 import {KafkaBroker} from "../domain/KafkaBroker";
 import {RecordMetadata} from "../domain/RecordMetadata";
 import {Subject} from "rxjs/Subject";
+import "rxjs/add/operator/map";
 
 @Injectable()
 export class ApiService {
 
-  public constructor(private http: Http) {
-  }
+    public constructor(private http: Http) {
+    }
 
-  public getBrokers(): Observable<Array<KafkaBroker>> {
-    return this.getVersionedResponseStream("/api/brokers", 2000);
-  }
+    public getEnvironment(): Observable<string> {
+        return this.http.get("/api/environment").map(response => response.json());
+    }
 
-  public getTopics(): Observable<Array<KafkaTopic>> {
-    return this.getVersionedResponseStream("/api/topics", 2000);
-  }
+    public getBrokers(): Observable<Array<KafkaBroker>> {
+        return this.getVersionedResponseStream("/api/brokers", 2000);
+    }
 
-  public getTopicData(topic: KafkaTopic, partition: number): Observable<Array<TopicMessage>> {
-    return this.getVersionedResponseStream(`/api/topics/${topic.name}/${partition}`, 2000);
-  }
+    public getTopics(): Observable<Array<KafkaTopic>> {
+        return this.getVersionedResponseStream("/api/topics", 2000);
+    }
 
-  public getTopicConsumers(topic: KafkaTopic, partition: number): Observable<Array<Consumer>> {
-    return this.http.get(`/api/consumers/${topic.name}/${partition}`).map(response => response.json());
-  }
+    public getTopicData(topic: KafkaTopic, partition: number): Observable<Array<TopicMessage>> {
+        return this.getVersionedResponseStream(`/api/topics/${topic.name}/${partition}`, 2000);
+    }
 
-  public publishTopicMessage(topic: KafkaTopic, key: string, value: string): Observable<RecordMetadata> {
-    const body = new URLSearchParams();
-    body.append("key", key);
-    body.append("value", value);
+    public getTopicConsumers(topic: KafkaTopic, partition: number): Observable<Array<Consumer>> {
+        return this.http.get(`/api/consumers/${topic.name}/${partition}`).map(response => response.json());
+    }
 
-    return this.http.post(`/api/topics/${topic.name}`, body)
-      .map((response: any) => {
-        response = response.json();
-        return new RecordMetadata(response.offset, response.topicPartition.partition);
-      });
-  }
+    public publishTopicMessage(topic: KafkaTopic, key: string, value: string): Observable<RecordMetadata> {
+        const body = new URLSearchParams();
+        body.append("key", key);
+        body.append("value", value);
 
-  private getVersionedResponseStream<T>(endpoint: string, period: number): Observable<T> {
-    return this.getResponseStream(endpoint, period, true);
-  }
+        return this.http.post(`/api/topics/${topic.name}`, body.toString())
+            .map((response: any) => {
+                response = response.json();
+                return new RecordMetadata(response.offset, response.topicPartition.partition);
+            });
+    }
 
-  private getResponseStream<T>(endpoint: string, period: number, isVersioned: boolean) {
-    const subject = new Subject<T>();
-    let version = 0;
+    private getVersionedResponseStream<T>(endpoint: string, period: number): Observable<T> {
+        return this.getResponseStream(endpoint, period, true);
+    }
 
-    const handler = () => {
-      this.http.get(isVersioned ? `${endpoint}?version=${version}` : endpoint)
-        .map(response => response.json())
-        .subscribe(
-          response => {
-            if (isVersioned) {
-              version = response.version;
-              subject.next(response.data);
-            } else {
-              subject.next(response);
-            }
+    private getResponseStream<T>(endpoint: string, period: number, isVersioned: boolean): Observable<T> {
+        const subject = new Subject<T>();
+        let version = 0;
 
-            setTimeout(handler, period);
-          },
-          error => {
-            if (error.status !== 304) {
-              console.error(error);
-            }
+        const handler = () => {
+            this.http.get(isVersioned ? `${endpoint}?version=${version}` : endpoint)
+                .map(response => response.json())
+                .subscribe(
+                    response => {
+                        if (isVersioned) {
+                            version = response.version;
+                            subject.next(response.data);
+                        } else {
+                            subject.next(response);
+                        }
 
-            setTimeout(handler, period);
-          });
-    };
+                        setTimeout(handler, period);
+                    },
+                    error => {
+                        if (error.status !== 304) {
+                            console.error(error);
+                        }
 
-    handler();
-    return subject;
-  }
+                        setTimeout(handler, period);
+                    });
+        };
+
+        handler();
+        return subject.asObservable();
+    }
 }

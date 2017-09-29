@@ -1,5 +1,6 @@
 package com.enthusiast94.kafkavisualizer;
 
+import com.enthusiast94.kafkavisualizer.api.RestResource;
 import com.enthusiast94.kafkavisualizer.domain.CommandLineArgs;
 import com.enthusiast94.kafkavisualizer.service.*;
 import com.enthusiast94.kafkavisualizer.util.HttpResponseFactory;
@@ -85,5 +86,17 @@ public class AppBootstrapper {
         KafkaTopicsTracker kafkaTopicsTracker = new KafkaTopicsTracker(zkClient);
         kafkaTopicsTracker.start();
         return kafkaTopicsTracker;
+    }
+
+    @Bean
+    public RestResource mainResource(CommandLineArgs commandLineArgs,
+                                     HttpResponseFactory httpResponseFactory,
+                                     KafkaProducerWrapper kafkaProducerWrapper,
+                                     KafkaBrokersTracker kafkaBrokersTracker,
+                                     KafkaTopicsTracker kafkaTopicsTracker,
+                                     KafkaTopicsDataTracker kafkaTopicsDataTracker,
+                                     KafkaUtils kafkaUtils) {
+        return new RestResource(commandLineArgs.environment, httpResponseFactory, kafkaProducerWrapper,
+                kafkaBrokersTracker, kafkaTopicsTracker, kafkaTopicsDataTracker, kafkaUtils);
     }
 }

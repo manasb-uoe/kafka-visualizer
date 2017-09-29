@@ -1,6 +1,6 @@
 package com.enthusiast94.kafkavisualizer;
 
-import com.enthusiast94.kafkavisualizer.api.MainResource;
+import com.enthusiast94.kafkavisualizer.api.RestResource;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,7 +10,7 @@ import javax.ws.rs.ApplicationPath;
 @ApplicationPath("/api")
 public class JerseyConfig extends ResourceConfig {
 
-    public JerseyConfig(MainResource mainResource) {
-        register(mainResource);
+    public JerseyConfig(RestResource restResource) {
+        register(restResource);
     }
 }

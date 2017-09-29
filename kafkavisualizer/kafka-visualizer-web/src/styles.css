@@ -47,11 +47,21 @@ body {
 }
 
 .pageHeaderContainer {
-  padding-top: 15px; padding-bottom: 5px; border-bottom: 4px solid var(--borderColor);
+  padding-top: 15px;
+  padding-bottom: 5px;
+  border-bottom: 4px solid var(--borderColor);
+  margin-bottom: 10px;
 }
 
 .pageHeader {
   font-weight: 400;
+}
+
+.customListGroupItem {
+  padding: 10px;
+  margin-bottom: 0 !important;
+  border-radius: 0 !important;
+  border-bottom: 0 !important;
 }
 
 /* angular2-prettyjson styles */

@@ -1,25 +1,29 @@
 package com.enthusiast94.kafkavisualizer.api;
 
+import com.enthusiast94.kafkavisualizer.domain.AppEnvironment;
 import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaBroker;
 import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaTopic;
 import com.enthusiast94.kafkavisualizer.service.*;
 import com.enthusiast94.kafkavisualizer.util.HttpResponseFactory;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Optional;
 
-@Component
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON_VALUE)
-public class MainResource {
+public class RestResource {
 
+    private final AppEnvironment environment;
     private final HttpResponseFactory responseFactory;
     private final KafkaProducerWrapper kafkaProducerWrapper;
     private final KafkaBrokersTracker kafkaBrokersTracker;
@@ -27,11 +31,13 @@ public class MainResource {
     private final KafkaTopicsDataTracker kafkaTopicsDataTracker;
     private final KafkaUtils kafkaUtils;
 
-    public MainResource(HttpResponseFactory responseFactory,
+    public RestResource(AppEnvironment environment,
+                        HttpResponseFactory responseFactory,
                         KafkaProducerWrapper kafkaProducerWrapper,
                         KafkaBrokersTracker kafkaBrokersTracker,
                         KafkaTopicsTracker kafkaTopicsTracker,
                         KafkaTopicsDataTracker kafkaTopicsDataTracker, KafkaUtils kafkaUtils) {
+        this.environment = environment;
         this.responseFactory = responseFactory;
         this.kafkaProducerWrapper = kafkaProducerWrapper;
         this.kafkaBrokersTracker = kafkaBrokersTracker;
@@ -41,7 +47,13 @@ public class MainResource {
     }
 
     @GET
-    @Path("brokers")
+    @Path("/environment")
+    public Response environment() {
+        return responseFactory.createOkResponse(environment.toString());
+    }
+
+    @GET
+    @Path("/brokers")
     public Response brokers(@QueryParam("version") long version) {
         Optional<VersionedResponse<ImmutableList<KafkaBroker>>> brokers = kafkaBrokersTracker.getBrokers(version);
         if (brokers.isPresent()) {
@@ -52,7 +64,7 @@ public class MainResource {
     }
 
     @GET
-    @Path("topics")
+    @Path("/topics")
     public Response topics(@QueryParam("version") long version) {
         Optional<VersionedResponse<ImmutableList<KafkaTopic>>> topics = kafkaTopicsTracker.getTopics(version);
         if (topics.isPresent()) {
@@ -108,9 +120,12 @@ public class MainResource {
     @POST
     @Path("/topics/{topicName}")
     public Response postTopicData(@PathParam("topicName") String topicName,
-                                  @FormParam("key") String key,
-                                  @FormParam("value") String value) {
+                                  String data) {
         try {
+            ImmutableMap<String, String> params = parseUrlEncodedParams(data);
+            String key = params.get("key");
+            String value = params.get("value");
+
             if (key == null || value == null) {
                 return responseFactory.createBadRequestResponse("One of the required post params 'key' " +
                         "or 'value' are missing");
@@ -135,5 +150,14 @@ public class MainResource {
     private boolean doesTopicExist(String topicName) {
         return kafkaUtils.getAllTopics().stream()
                 .anyMatch(topic -> topic.name.equals(topicName));
+    }
+
+    private ImmutableMap<String, String> parseUrlEncodedParams(String input) throws UnsupportedEncodingException {
+        input = URLDecoder.decode(input, "utf8");
+        if (input.startsWith("?")) {
+            input = input.substring(1);
+        }
+
+        return ImmutableMap.copyOf(Splitter.on("&").withKeyValueSeparator("=").split(input));
     }
 }

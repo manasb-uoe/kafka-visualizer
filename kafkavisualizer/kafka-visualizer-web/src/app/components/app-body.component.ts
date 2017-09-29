@@ -1,37 +1,29 @@
 import {Component} from "@angular/core";
 
 @Component({
-  selector: "app-body",
-  template: `
-    <!--<div class="row" style="margin-top: 30px">-->
-      <!--<div class="col-md-3">-->
-        <!--<brokers></brokers>-->
-        <!--<br>-->
-        <!--<topics-list (onTopicSelected)="topicDataComponent.selectedTopic = $event; topicPublisherComponent.selectedTopic = $event"></topics-list>-->
-      <!--</div>-->
-      <!--<div class="col-md-6">-->
-        <!--<topic-data #topicDataComponent-->
-                    <!--(onTopicPartitionSelected)="topicConsumersComponent.selectedTopicPartition = $event"></topic-data>-->
-      <!--</div>-->
-      <!--<div class="col-md-3">-->
-        <!--<topic-consumers #topicConsumersComponent></topic-consumers>-->
-        <!--<br>-->
-        <!--<topic-publisher #topicPublisherComponent></topic-publisher>-->
-      <!--</div>-->
-    <!--</div>-->
+    selector: "app-body",
+    template: `        
+        <div class="row">
+            <div class="col-3 sidebar">
+                <brokers></brokers>
+                <topics-list (onTopicSelected)="topicDataComponent.selectedTopic = $event; 
+                topicConsumersComponent.selectedTopic = $event; topicPublisherComponent.selectedTopic = $event;"></topics-list>
+            </div>
 
-    <div class="row">
-      <div class="col-3 sidebar">
-        <brokers></brokers>
-        <topics-list (onTopicSelected)="topicDataComponent.selectedTopic = $event"></topics-list>
-      </div>
-      
-      <div class="col-9 ml-auto">
-        <topic-data #topicDataComponent></topic-data>
-      </div>
-    </div>
-    
-  `
+            <div class="col-9 ml-auto" style="margin-top: 15px;">
+                <tabs>
+                    <tab title="Messages">
+                        <topic-data #topicDataComponent (onPublishButtonClicked)="topicPublisherComponent.showModal()"></topic-data>                         
+                    </tab>
+                    <tab title="Consumers">
+                        <topic-consumers #topicConsumersComponent></topic-consumers>
+                    </tab>
+                </tabs>
+            </div>
+        </div>
+
+        <topic-publisher #topicPublisherComponent></topic-publisher>
+    `
 })
 export class AppBodyComponent {
 }

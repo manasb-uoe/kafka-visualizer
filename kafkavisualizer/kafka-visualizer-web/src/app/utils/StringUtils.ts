@@ -9,7 +9,6 @@ export class StringUtils {
     }
 
     let markedString = "";
-
     const firstOccurrenceIndex = inputString.toLowerCase().indexOf(searchTerm.toLowerCase());
 
     for (let i = 0; i < inputString.length; i++) {

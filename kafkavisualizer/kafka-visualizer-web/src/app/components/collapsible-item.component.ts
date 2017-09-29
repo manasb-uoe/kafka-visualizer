@@ -3,8 +3,7 @@ import {Component} from "@angular/core";
 @Component({
   selector: "collapsible-item",
   template: `
-    <li class="list-group-item"
-        style="padding: 0; margin-bottom: 0 !important; border-radius: 0 !important; border-bottom: 0 !important; ">
+    <li class="list-group-item customListGroupItem" style="padding: 0;">
       <div (click)="toggleBodyVisibility()" class="selectable pointable" style="padding: 10px;">
         <ng-content select="[item-header]"></ng-content>
       </div>
