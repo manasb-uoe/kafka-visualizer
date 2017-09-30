@@ -11,7 +11,7 @@ The executable jar will be generated under the the `target` directory of `kafka-
 > Requirement: JDK 8 with JavaFX 
 
 ## How to run?
-Run the executable jar using the following command and then navigate to `localhost:4200` on your browser:
+Run the executable jar using the following command and then navigate to `localhost:8080` on your browser:
 
 `$ java -jar .\kafka-visualizer-rest-1.0-SNAPSHOT.jar --zookeeper=hostname:port --kafka=hostname:port -env=<DEV,QA,UAT or PROD> [--maxTopicMessagesCount=<number>]`
 
