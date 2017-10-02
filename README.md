@@ -2,11 +2,11 @@
 A web client for visualizing your Kafka cluster. Developed using **Spring Boot**, **Angular 4** and **Bootstrap 4**.
 
 ## How to build?
-Run the folowing command on the parent maven module `kafka-visualizer`:
+Run the following command on the parent maven module `kafka-visualizer`:
 
 `$ mvn clean package`
 
-The executable jar will be generated under the the `target` directory of `kafka-visualizer-rest` module.
+The executable jar will be generated under the `target` directory of `kafka-visualizer-rest` module.
 
 > Requirement: JDK 8 with JavaFX 
 
