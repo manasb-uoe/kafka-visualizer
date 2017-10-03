@@ -8,7 +8,10 @@ Run the following command on the parent maven module `kafka-visualizer`:
 
 The executable jar will be generated under the `target` directory of `kafka-visualizer-rest` module.
 
-> Requirement: JDK 8 with JavaFX 
+**Requirements:** 
+1. Maven
+2. JDK 8 with JavaFX
+3. Node Package Manager (npm)
 
 ## How to run?
 Run the executable jar using the following command and then navigate to `localhost:8080` on your browser:
