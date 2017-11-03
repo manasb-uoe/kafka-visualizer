@@ -1,6 +1,8 @@
 # Kafka Visualizer
 A web client for visualizing your Kafka cluster. Developed using **Spring Boot**, **Angular 4** and **Bootstrap 4**.
 
+![Screenshot](https://github.com/enthusiast94/kafka-visualizer/blob/master/screenshot_1.png)
+
 ## How to build?
 Run the following command on the parent maven module `kafka-visualizer`:
 
@@ -26,6 +28,3 @@ Run the executable jar using the following command and then navigate to `localho
 - **`GET /api/topics/{topicName}/{partition}`**: Returns a list of messages on a certain topic-partition pair.
 - **`POST /api/topics/{topicName}`**: Accepts `text/plain` message with a `key` and a `value` (eg: key=1&value=2), and publishes it to a certain topic. 
 
-## Screenshots 
-
-![Screenshot](https://github.com/enthusiast94/kafka-visualizer/blob/master/screenshot_1.png)
