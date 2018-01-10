@@ -6,7 +6,7 @@ A web client for visualizing your Kafka cluster. Developed using **Spring Boot**
 ## How to build?
 Run the following command on the parent maven module `kafka-visualizer`:
 
-`$ mvn clean package`
+`$ mvn package`
 
 The executable jar will be generated under the `target` directory of `kafka-visualizer-rest` module.
 
