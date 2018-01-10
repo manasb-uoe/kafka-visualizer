@@ -7,17 +7,15 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.sun.javafx.collections.ObservableMapWrapper;
+import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableMap;
 import org.I0Itec.zkclient.ZkClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +29,7 @@ public class KafkaBrokersTracker implements AutoCloseable {
     private final ZkClient zkClient;
     private final JsonParser jsonParser = new JsonParser();
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final ObservableMap<String, KafkaBroker> brokersById = new ObservableMapWrapper<>(Collections.synchronizedMap(new ConcurrentHashMap<>()));
+    private final ObservableMap<String, KafkaBroker> brokersById = FXCollections.synchronizedObservableMap(FXCollections.observableHashMap());
     private final AtomicLong version = new AtomicLong();
     private final AtomicBoolean started = new AtomicBoolean();
 
