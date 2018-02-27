@@ -1,5 +1,6 @@
 package com.enthusiast94.kafkavisualizer.service;
 
+import com.enthusiast94.kafkavisualizer.domain.MaxTopicMessageCount;
 import com.enthusiast94.kafkavisualizer.util.exception.DefectException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -20,11 +21,11 @@ public class KafkaTopicsDataTracker {
     private static final Logger log = LogManager.getLogger(KafkaTopicsDataTracker.class);
 
     private final KafkaAllTopicsConsumer kafkaAllTopicsConsumer;
-    private final int maxTopicMessagesCount;
+    private final MaxTopicMessageCount maxTopicMessagesCount;
     private final Map<TopicPartition, VersionedMessages> messagesByTopicPartition = new HashMap<>();
     private final AtomicBoolean started = new AtomicBoolean();
 
-    public KafkaTopicsDataTracker(KafkaAllTopicsConsumer kafkaAllTopicsConsumer, int maxTopicMessagesCount) {
+    public KafkaTopicsDataTracker(KafkaAllTopicsConsumer kafkaAllTopicsConsumer, MaxTopicMessageCount maxTopicMessagesCount) {
         this.kafkaAllTopicsConsumer = kafkaAllTopicsConsumer;
         this.maxTopicMessagesCount = maxTopicMessagesCount;
     }
@@ -65,7 +66,7 @@ public class KafkaTopicsDataTracker {
         LinkedList<ConsumerRecord<String, String>> messages = versionedMessages.messages;
         messages.addFirst(record);
 
-        if (messages.size() > maxTopicMessagesCount) {
+        if (messages.size() > maxTopicMessagesCount.value) {
             messages.removeLast();
         }
 

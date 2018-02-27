@@ -12,7 +12,7 @@ public class CommandLineArgs {
     public final AppEnvironment environment;
     public final String kafkaServers;
     public final String zookeeperServers;
-    public final int maxTopicMessagesCount;
+    public final MaxTopicMessageCount maxTopicMessagesCount;
 
     public CommandLineArgs(String[] args) {
         if (args.length < 3) {
@@ -48,9 +48,9 @@ public class CommandLineArgs {
 
         Matcher maxTopicMessagesCountMatcher = Pattern.compile("--maxTopicMessagesCount=([0-9]+)").matcher(argsString);
         if (!maxTopicMessagesCountMatcher.find()) {
-            maxTopicMessagesCount = 100;
+            maxTopicMessagesCount = MaxTopicMessageCount.EMPTY;
         } else {
-            maxTopicMessagesCount = Integer.valueOf(maxTopicMessagesCountMatcher.group(1));
+            maxTopicMessagesCount = new MaxTopicMessageCount(Integer.valueOf(maxTopicMessagesCountMatcher.group(1)));
         }
     }
 }
