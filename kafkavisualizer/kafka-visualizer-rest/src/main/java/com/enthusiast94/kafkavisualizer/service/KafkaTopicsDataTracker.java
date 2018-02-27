@@ -66,7 +66,7 @@ public class KafkaTopicsDataTracker {
         LinkedList<ConsumerRecord<String, String>> messages = versionedMessages.messages;
         messages.addFirst(record);
 
-        if (messages.size() > maxTopicMessagesCount.value) {
+        if (!maxTopicMessagesCount.equals(MaxTopicMessageCount.EMPTY) && messages.size() > maxTopicMessagesCount.value) {
             messages.removeLast();
         }
 
