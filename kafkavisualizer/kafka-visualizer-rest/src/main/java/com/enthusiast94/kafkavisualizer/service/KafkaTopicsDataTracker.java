@@ -2,6 +2,7 @@ package com.enthusiast94.kafkavisualizer.service;
 
 import com.enthusiast94.kafkavisualizer.domain.MaxTopicMessageCount;
 import com.enthusiast94.kafkavisualizer.util.exception.DefectException;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -38,7 +39,9 @@ public class KafkaTopicsDataTracker {
         kafkaAllTopicsConsumer.subscribe(this::onMessageConsumed);
     }
 
-    public synchronized Optional<VersionedResponse<ImmutableList<ConsumerRecord<String, String>>>> getRecords(TopicPartition topicPartition, long clientVersion) {
+    public synchronized Optional<VersionedResponse<ImmutableList<ConsumerRecord<String, String>>>> getRecords(TopicPartition topicPartition,
+                                                                                                              long clientVersion,
+                                                                                                              String query) {
         if (!messagesByTopicPartition.containsKey(topicPartition)) {
             return Optional.of(new VersionedResponse<>(0, ImmutableList.of()));
         }
@@ -49,8 +52,17 @@ public class KafkaTopicsDataTracker {
             return Optional.empty();
         }
 
-        return Optional.of(new VersionedResponse<>(versionedMessages.version.get(),
-                ImmutableList.copyOf(versionedMessages.messages)));
+        ImmutableList<ConsumerRecord<String, String>> filteredMessages;
+
+        if (Strings.isNullOrEmpty(query)) {
+            filteredMessages = ImmutableList.copyOf(versionedMessages.messages);
+        } else {
+            filteredMessages = versionedMessages.messages.stream()
+                    .filter(message -> message.value().contains(query))
+                    .collect(ImmutableList.toImmutableList());
+        }
+
+        return Optional.of(new VersionedResponse<>(versionedMessages.version.get(), filteredMessages));
     }
 
     private synchronized void onMessageConsumed(ConsumerRecord<String, String> record) {

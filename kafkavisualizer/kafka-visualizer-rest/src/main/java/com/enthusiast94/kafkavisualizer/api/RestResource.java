@@ -103,10 +103,11 @@ public class RestResource {
     @Path("/topics/{topicName}/{partition}")
     public Response topicData(@PathParam("topicName") String topicName,
                               @PathParam("partition") int partition,
-                              @QueryParam("version") long version) {
+                              @QueryParam("version") long version,
+                              @QueryParam("query") String query) {
         try {
             Optional<VersionedResponse<ImmutableList<ConsumerRecord<String, String>>>> records =
-                    kafkaTopicsDataTracker.getRecords(new TopicPartition(topicName, partition), version);
+                    kafkaTopicsDataTracker.getRecords(new TopicPartition(topicName, partition), version, query);
             if (!records.isPresent()) {
                 return responseFactory.createNotModifiedResponse();
             }

@@ -1,13 +1,13 @@
-import {KafkaTopic} from "../domain/KafkaTopic";
-import {ApiService} from "../services/api.service";
-import {TopicMessage} from "../domain/TopicMessage";
-import {StringUtils} from "../utils/StringUtils";
-import {Subscription} from "rxjs/Subscription";
-import {Component, EventEmitter, Input, Output} from "@angular/core";
+import { KafkaTopic } from "../domain/KafkaTopic";
+import { ApiService } from "../services/api.service";
+import { TopicMessage } from "../domain/TopicMessage";
+import { StringUtils } from "../utils/StringUtils";
+import { Subscription } from "rxjs/Subscription";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 
 @Component({
-    selector: "topic-data",
-    template: `
+  selector: "topic-data",
+  template: `
         <div *ngIf="selectedTopic">
             <div class="pageHeaderContainer">
                 <h6 class="pageHeader"
@@ -25,8 +25,9 @@ import {Component, EventEmitter, Input, Output} from "@angular/core";
             </div>
 
             <div style="margin-bottom: 10px; display: flex; flex-direction: row; margin-bottom: 10px;">
-                <button (click)="onPublishButtonClicked.emit(selectedTopic)" class="btn btn-success btn-sm pointable" style="margin-right: 10px;">Publish Message</button>
-                <input [ngModel]="searchTerm" (ngModelChange)="onSearchTermChanged($event)"
+                <button (click)="onPublishButtonClicked.emit(selectedTopic)" class="btn btn-success btn-sm pointable"
+                 style="margin-right: 10px;">Publish Message</button>
+                <input (keyup.enter)="onSearch()" [(ngModel)]="searchTerm"
                 class="form-control form-control-sm"
                 placeholder="Search">
             </div>
@@ -37,7 +38,7 @@ import {Component, EventEmitter, Input, Output} from "@angular/core";
                     <div item-header>
                         <span class="text-primary" style="font-weight: bold">[{{message.offset}}]</span> - <span
                             class="text-success">{{message.timestamp | date:'dd MMM yyyy HH:mm'}}</span>
-                        <div st [innerHtml]="markSearchTermInString(message.value)" style="word-wrap: break-word"></div>
+                        <div [innerHtml]="markSearchTermInString(message.value)" style="word-wrap: break-word"></div>
                     </div>
                     <div item-body>
                         <pre [innerHtml]="tryParseJson(message.value) | prettyjson:2"></pre>
@@ -51,99 +52,115 @@ import {Component, EventEmitter, Input, Output} from "@angular/core";
         </div>
         <div *ngIf="!selectedTopic" style="margin-top: 15px;">Please select a topic</div>
     `,
-    styles: [`
-    `]
+  styles: [
+    `
+    `
+  ]
 })
 export class TopicsDataComponent {
+  @Output() public onPublishButtonClicked = new EventEmitter<KafkaTopic>();
+  public topicMessages: Array<TopicMessage> = [];
+  public isLoading: boolean;
+  public searchTerm: string;
+  public filteredTopicMessages: Array<TopicMessage> = [];
 
-    @Output() public onPublishButtonClicked = new EventEmitter<KafkaTopic>();
-    public topicMessages: Array<TopicMessage> = [];
-    public isLoading: boolean;
-    public searchTerm: string;
-    public filteredTopicMessages: Array<TopicMessage> = [];
+  private _selectedTopic: KafkaTopic;
+  private _selectedPartition: number;
+  private _currentSubscription: Subscription;
 
-    private _selectedTopic: KafkaTopic;
-    private _selectedPartition: number;
-    private _currentSubscription: Subscription;
+  public constructor(private apiService: ApiService) {}
 
-    public constructor(private apiService: ApiService) {
+  @Input()
+  public set selectedTopic(topic: KafkaTopic) {
+    this._selectedTopic = topic;
+    this._selectedPartition = 0;
+
+    this.onTopicOrPartitionChanged();
+  }
+
+  public get selectedTopic() {
+    return this._selectedTopic;
+  }
+
+  public set selectedPartition(partition: number) {
+    this._selectedPartition = partition;
+
+    this.onTopicOrPartitionChanged();
+  }
+
+  public get selectedPartition() {
+    return this._selectedPartition;
+  }
+
+  public tryParseJson(content: string) {
+    try {
+      return JSON.parse(content);
+    } catch (e) {
+      return content;
+    }
+  }
+
+  public getPartitionsList(): Array<number> {
+    const partitions = [];
+    for (let i = 0; i < this.selectedTopic.numPartitions; i++) {
+      partitions.push(i);
     }
 
-    @Input()
-    public set selectedTopic(topic: KafkaTopic) {
-        this._selectedTopic = topic;
-        this._selectedPartition = 0;
+    return partitions;
+  }
 
-        this.onTopicOrPartitionChanged();
+  public markSearchTermInString(inputString: string): string {
+    return StringUtils.markSearchTermInString(inputString, this.searchTerm);
+  }
+
+  public onSearch(): void {
+    // this clears the subscribtion so that we only subscribe to new messages containing the search term
+    this.onTopicOrPartitionChanged();
+
+    this.apiService
+      .getTopicDataUnVersioned(
+        this.selectedTopic,
+        this.selectedPartition,
+        this.searchTerm
+      )
+      .subscribe(this.onTopicMessagesChanged.bind(this));
+  }
+
+  private filterTopicMessages(): void {
+    this.filteredTopicMessages.length = 0;
+
+    if (!this.searchTerm || this.searchTerm.length === 0) {
+      this.topicMessages.forEach(message =>
+        this.filteredTopicMessages.push(message)
+      );
+      return;
     }
 
-    public get selectedTopic() {
-        return this._selectedTopic;
+    this.topicMessages
+      .filter(message =>
+        message.value.toLowerCase().includes(this.searchTerm.toLowerCase())
+      )
+      .forEach(message => this.filteredTopicMessages.push(message));
+  }
+
+  private onTopicOrPartitionChanged(): void {
+    this.isLoading = true;
+    this.topicMessages.length = 0;
+
+    if (this._currentSubscription) {
+      this._currentSubscription.unsubscribe();
     }
 
-    public set selectedPartition(partition: number) {
-        this._selectedPartition = partition;
+    this._currentSubscription = this.apiService
+      .getTopicData(this.selectedTopic, this.selectedPartition, this.searchTerm)
+      .subscribe(this.onTopicMessagesChanged.bind(this));
+  }
 
-        this.onTopicOrPartitionChanged();
-    }
+  private onTopicMessagesChanged(newMessages: TopicMessage[]) {
+    this.topicMessages.length = 0;
+    newMessages.forEach(message => this.topicMessages.push(message));
+    this.filteredTopicMessages = this.topicMessages;
 
-    public get selectedPartition() {
-        return this._selectedPartition;
-    }
-
-    public tryParseJson(content: string) {
-        try {
-            return JSON.parse(content);
-        } catch (e) {
-            return content;
-        }
-    }
-
-    public getPartitionsList(): Array<number> {
-        const partitions = [];
-        for (let i = 0; i < this.selectedTopic.numPartitions; i++) {
-            partitions.push(i);
-        }
-
-        return partitions;
-    }
-
-    public onSearchTermChanged(newValue: string): void {
-        this.searchTerm = newValue;
-        this.filterTopicMessages();
-    }
-
-    public markSearchTermInString(inputString: string): string {
-        return StringUtils.markSearchTermInString(inputString, this.searchTerm);
-    }
-
-    private filterTopicMessages(): void {
-        this.filteredTopicMessages.length = 0;
-
-        if (!this.searchTerm || this.searchTerm.length === 0) {
-            this.topicMessages.forEach(message => this.filteredTopicMessages.push(message));
-            return;
-        }
-
-        this.topicMessages
-            .filter(message => message.value.toLowerCase().includes(this.searchTerm.toLowerCase()))
-            .forEach(message => this.filteredTopicMessages.push(message));
-    }
-
-    private onTopicOrPartitionChanged(): void {
-        this.isLoading = true;
-        this.topicMessages.length = 0;
-
-        if (this._currentSubscription) {
-            this._currentSubscription.unsubscribe();
-        }
-
-        this._currentSubscription = this.apiService.getTopicData(this.selectedTopic, this.selectedPartition).subscribe(topicMessages => {
-            this.topicMessages.length = 0;
-            topicMessages.forEach(message => this.topicMessages.push(message));
-            this.filterTopicMessages();
-
-            this.isLoading = false;
-        });
-    }
+    this.isLoading = false;
+  }
 }
