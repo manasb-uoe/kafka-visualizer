@@ -8,6 +8,7 @@ import com.enthusiast94.kafkavisualizer.util.HttpResponseFactory;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import javafx.util.Pair;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.TopicPartition;
@@ -18,6 +19,8 @@ import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON_VALUE)
@@ -123,20 +126,13 @@ public class RestResource {
     public Response postTopicData(@PathParam("topicName") String topicName,
                                   String data) {
         try {
-            ImmutableMap<String, String> params = parseUrlEncodedParams(data);
-            String key = params.get("key");
-            String value = params.get("value");
-
-            if (key == null || value == null) {
-                return responseFactory.createBadRequestResponse("One of the required post params 'key' " +
-                        "or 'value' are missing");
-            }
+            Pair<String, String> keyValuePair = parseKeyValuePair(data);
 
             if (!doesTopicExist(topicName)) {
                 return responseFactory.createNotFoundResponse(String.format("No topic exists with the name [%s]", topicName));
             }
 
-            RecordMetadata metadata = kafkaProducerWrapper.publish(key, value, topicName);
+            RecordMetadata metadata = kafkaProducerWrapper.publish(keyValuePair.getKey(), keyValuePair.getValue(), topicName);
             return responseFactory.createOkResponse(metadata);
         } catch (Exception e) {
             return responseFactory.createServerErrorResponse(e);
@@ -153,12 +149,17 @@ public class RestResource {
                 .anyMatch(topic -> topic.name.equals(topicName));
     }
 
-    private ImmutableMap<String, String> parseUrlEncodedParams(String input) throws UnsupportedEncodingException {
+    private Pair<String, String> parseKeyValuePair(String input) throws UnsupportedEncodingException {
         input = URLDecoder.decode(input, "utf8");
         if (input.startsWith("?")) {
             input = input.substring(1);
         }
 
-        return ImmutableMap.copyOf(Splitter.on("&").withKeyValueSeparator("=").split(input));
+        Matcher matcher = Pattern.compile("key=(.*)&value=(.*)", Pattern.DOTALL).matcher(input);
+        if (!matcher.find()){
+            throw new IllegalArgumentException("no key/value params found in the posted body");
+        }
+
+        return new Pair<>(matcher.group(1), matcher.group(2));
     }
 }

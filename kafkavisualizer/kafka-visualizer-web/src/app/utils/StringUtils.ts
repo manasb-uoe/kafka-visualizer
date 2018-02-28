@@ -4,6 +4,8 @@ import {Injectable} from "@angular/core";
 export class StringUtils {
 
   public static markSearchTermInString(inputString: string, searchTerm: string): string {
+    inputString = StringUtils.sanitizeString(inputString);
+
     if (!searchTerm || searchTerm.length === 0) {
       return inputString;
     }
@@ -24,5 +26,9 @@ export class StringUtils {
     }
 
     return markedString;
+  }
+
+  private static sanitizeString(content: string): string {
+    return content.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
 }

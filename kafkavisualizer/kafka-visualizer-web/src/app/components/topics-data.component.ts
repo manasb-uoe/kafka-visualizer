@@ -4,6 +4,7 @@ import { TopicMessage } from "../domain/TopicMessage";
 import { StringUtils } from "../utils/StringUtils";
 import { Subscription } from "rxjs/Subscription";
 import { Component, EventEmitter, Input, Output } from "@angular/core";
+import * as vkbeautify from "vkbeautify";
 
 @Component({
   selector: "topic-data",
@@ -32,21 +33,28 @@ import { Component, EventEmitter, Input, Output } from "@angular/core";
                 placeholder="Search">
             </div>
 
-            <ul *ngIf="!isLoading && filteredTopicMessages.length > 0" class="list-group"
+            <ul *ngIf="!isLoading && topicMessages.length > 0" class="list-group"
                 style="border-bottom: 1px solid rgba(0,0,0,.125);">
-                <collapsible-item *ngFor="let message of filteredTopicMessages">
+                <collapsible-item *ngFor="let message of topicMessages">
                     <div item-header>
                         <span class="text-primary" style="font-weight: bold">[{{message.offset}}]</span> - <span
                             class="text-success">{{message.timestamp | date:'dd MMM yyyy HH:mm'}}</span>
                         <div [innerHtml]="markSearchTermInString(message.value)" style="word-wrap: break-word"></div>
                     </div>
                     <div item-body>
-                        <pre [innerHtml]="tryParseJson(message.value) | prettyjson:2"></pre>
+                      <pre *ngIf="isJson(message.value); else xmlMessageTemplate" [innerHtml]="parseJson(message.value)
+                       | prettyjson:2"></pre>
+                      <ng-template #xmlMessageTemplate>
+                        <pre *ngIf="isXml(message.value); else defaultMessageTemplate">{{parseXml(message.value)}}</pre>
+                      </ng-template>
+                      <ng-template #defaultMessageTemplate>
+                        <pre>{{message.value}}</pre>
+                      </ng-template>
                     </div>
                 </collapsible-item>
             </ul>
 
-            <div *ngIf="filteredTopicMessages.length == 0 && !isLoading" style="margin-top: 10px;">No messages found
+            <div *ngIf="topicMessages.length == 0 && !isLoading" style="margin-top: 10px;">No messages found
             </div>
             <div *ngIf="isLoading" style="margin-top: 10px;">Loading...</div>
         </div>
@@ -62,7 +70,6 @@ export class TopicsDataComponent {
   public topicMessages: Array<TopicMessage> = [];
   public isLoading: boolean;
   public searchTerm: string;
-  public filteredTopicMessages: Array<TopicMessage> = [];
 
   private _selectedTopic: KafkaTopic;
   private _selectedPartition: number;
@@ -92,12 +99,25 @@ export class TopicsDataComponent {
     return this._selectedPartition;
   }
 
-  public tryParseJson(content: string) {
+  public isXml(content: string): boolean {
+    return content.startsWith("<") && content.endsWith(">");
+  }
+
+  public isJson(content: string): boolean {
     try {
-      return JSON.parse(content);
-    } catch (e) {
-      return content;
+      JSON.parse(content);
+      return true;
+    } catch(e) {
+      return false;
     }
+  }
+
+  public parseJson(content: string): string {
+    return JSON.parse(content);
+  }
+
+  public parseXml(content: string): string {
+    return vkbeautify.xml(content);
   }
 
   public getPartitionsList(): Array<number> {
@@ -126,23 +146,6 @@ export class TopicsDataComponent {
       .subscribe(this.onTopicMessagesChanged.bind(this));
   }
 
-  private filterTopicMessages(): void {
-    this.filteredTopicMessages.length = 0;
-
-    if (!this.searchTerm || this.searchTerm.length === 0) {
-      this.topicMessages.forEach(message =>
-        this.filteredTopicMessages.push(message)
-      );
-      return;
-    }
-
-    this.topicMessages
-      .filter(message =>
-        message.value.toLowerCase().includes(this.searchTerm.toLowerCase())
-      )
-      .forEach(message => this.filteredTopicMessages.push(message));
-  }
-
   private onTopicOrPartitionChanged(): void {
     this.isLoading = true;
     this.topicMessages.length = 0;
@@ -159,7 +162,6 @@ export class TopicsDataComponent {
   private onTopicMessagesChanged(newMessages: TopicMessage[]) {
     this.topicMessages.length = 0;
     newMessages.forEach(message => this.topicMessages.push(message));
-    this.filteredTopicMessages = this.topicMessages;
 
     this.isLoading = false;
   }
