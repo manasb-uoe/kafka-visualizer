@@ -38,7 +38,8 @@ import * as vkbeautify from "vkbeautify";
                 <collapsible-item *ngFor="let message of topicMessages">
                     <div item-header>
                         <span class="text-primary" style="font-weight: bold">[{{message.offset}}]</span> - <span
-                            class="text-success">{{message.timestamp | date:'dd MMM yyyy HH:mm'}}</span>
+                            class="text-success">{{message.timestamp | date:'dd MMM yyyy HH:mm'}}</span> -
+                            <span class="text-danger">{{message.key}}</span>
                         <div [innerHtml]="markSearchTermInString(message.value)" style="word-wrap: break-word"></div>
                     </div>
                     <div item-body>
