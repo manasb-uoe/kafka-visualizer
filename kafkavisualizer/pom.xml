@@ -12,6 +12,7 @@
     <modules>
         <module>web</module>
         <module>rest</module>
+        <module>web-react</module>
     </modules>
 
     <parent>
