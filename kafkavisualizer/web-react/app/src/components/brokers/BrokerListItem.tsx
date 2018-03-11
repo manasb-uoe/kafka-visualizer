@@ -7,7 +7,7 @@ interface BrokerListItemProps {
 
 export default function BrokerListItem({ broker }: BrokerListItemProps) {
     return (
-        <div className="sidebarListItem selectable pointable">
+        <div className="sidebarListItem selectable">
             <div>
                 <i className="fa fa-server" aria-hidden="true" />
                 <span style={{ paddingLeft: '10px' }}>{broker.hostname}
