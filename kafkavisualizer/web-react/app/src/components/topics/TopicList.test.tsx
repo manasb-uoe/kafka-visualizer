@@ -17,7 +17,7 @@ describe('<TopicList />', () => {
     it('should load topics on mount', () => {
         const topicsState: ITopicsState = { isLoading: false, items: [], error: '' };
 
-        const wrapper = mount(<TopicList topics={topicsState} loadAllTopics={loadAllTopics} />);
+        mount(<TopicList topics={topicsState} loadAllTopics={loadAllTopics} />);
 
         expect(loadAllTopics.mock.calls.length).toBe(1);
     });
@@ -43,7 +43,7 @@ describe('<TopicList />', () => {
     });
 
     it('should show list of topics', () => {
-        const topicItems: Topic[] = [{ name: 'TopicOne', numPartitions: 1 }, { name: 'TopicTwo', numPartitions: 2 }]
+        const topicItems: Topic[] = [{ name: 'TopicOne', numPartitions: 1 }, { name: 'TopicTwo', numPartitions: 2 }];
         const topicsState: ITopicsState = { isLoading: false, items: topicItems, error: '' };
 
         const wrapper = mount(<TopicList topics={topicsState} loadAllTopics={loadAllTopics} />);

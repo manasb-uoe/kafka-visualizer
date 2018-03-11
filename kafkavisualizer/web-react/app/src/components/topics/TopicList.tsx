@@ -2,7 +2,6 @@ import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
 import { IAppState, ITopicsState } from '../../reducers/initialState';
 import * as topicActions from '../../actions/topicActions';
-import './TopicList.css';
 import TopicListItem from './TopicListItem';
 
 interface ITopicListProps {

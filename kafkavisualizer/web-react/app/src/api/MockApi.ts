@@ -1,6 +1,7 @@
 import { IApi } from './Api';
 import { Observable, Subject } from 'rxjs';
 import Topic from '../domain/Topic';
+import Broker from '../domain/Broker';
 
 export class MockApi implements IApi {
 
@@ -8,34 +9,27 @@ export class MockApi implements IApi {
 
     public getTopics(): Observable<Topic[]> {
         const subject = new Subject<Topic[]>();
-        const topics = [
-            <Topic> {
-                name: 'TopicOne',
-                numPartitions: 1
-            },
-            <Topic> {
-                name: 'TopicTwo',
-                numPartitions: 2
-            },
-            <Topic> {
-                name: 'TopicThree',
-                numPartitions: 2
-            },
-            <Topic> {
-                name: 'TopicFour',
-                numPartitions: 2
-            },
-            <Topic> {
-                name: 'TopicFive',
-                numPartitions: 4
-            },
-            <Topic> {
-                name: 'TopicSix',
-                numPartitions: 1
-            }
+        const topics: Topic[] = [
+            { name: 'TopicOne', numPartitions: 1 },
+            { name: 'TopicTwo', numPartitions: 1 },
+            { name: 'TopicThree', numPartitions: 2 },
+            { name: 'TopicFour', numPartitions: 4 },
         ];
 
         setTimeout(() => subject.next(topics), MockApi.DELAY);
+
+        return subject.asObservable();
+    }
+
+    public getBrokers(): Observable<Broker[]> {
+        const subject = new Subject<Broker[]>();
+        const brokers: Broker[] = [
+            { id: 1, hostname: 'localhost', port: 3001 },
+            { id: 2, hostname: 'localhost', port: 3002 },
+            { id: 3, hostname: 'localhost', port: 3003 }
+        ];
+
+        setTimeout(() => subject.next(brokers), MockApi.DELAY);
 
         return subject.asObservable();
     }

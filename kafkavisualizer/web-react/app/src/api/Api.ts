@@ -2,15 +2,21 @@ import { Observable, Subject } from 'rxjs';
 import Topic from '../domain/Topic';
 import * as envVars from '../constants/envVariables';
 import { MockApi } from './MockApi';
+import Broker from '../domain/Broker';
 
 export interface IApi {
     getTopics(): Observable<Array<Topic>>;
+    getBrokers(): Observable<Array<Broker>>;
 }
 
 class Api implements IApi {
-
+    
     public getTopics(): Observable<Array<Topic>> {
         return this.getVersionedResponseStream('/api/topics', 2000);
+    }
+
+    public getBrokers(): Observable<Broker[]> {
+        return this.getVersionedResponseStream('/api/brokers', 2000);
     }
 
     private getVersionedResponseStream<T>(endpoint: string, period: number): Observable<T> {

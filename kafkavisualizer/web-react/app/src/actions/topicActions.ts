@@ -1,8 +1,8 @@
-import { ITopicAction } from './topicActions';
 import { Action } from 'redux';
 import Topic from '../domain/Topic';
 import * as types from '../actions/actionTypes';
 import api from '../api/Api';
+import { Dispatch } from 'react-redux';
 
 export interface ITopicAction extends Action {
     topics: Topic[];
@@ -23,7 +23,7 @@ export function loadAllTopicsFailure(error: string): ITopicAction {
 
 export function loadAllTopics() {
     // tslint:disable-next-line:no-any
-    return (dispatch: any) => {
+    return (dispatch: Dispatch<any>) => {
         dispatch(loadAllTopicsStarted());
         api.getTopics()
             .subscribe(
