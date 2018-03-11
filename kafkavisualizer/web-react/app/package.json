@@ -5,7 +5,11 @@
   "dependencies": {
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-scripts-ts": "2.13.0"
+    "react-redux": "^5.0.7",
+    "react-scripts-ts": "2.13.0",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0",
+    "rxjs": "^5.5.6"
   },
   "scripts": {
     "start": "react-scripts-ts start",
