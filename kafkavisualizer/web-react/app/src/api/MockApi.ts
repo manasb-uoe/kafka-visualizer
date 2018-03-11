@@ -4,7 +4,7 @@ import Topic from '../domain/Topic';
 
 export class MockApi implements IApi {
 
-    private static readonly DELAY = 2000;
+    private static readonly DELAY = 1000;
 
     public getTopics(): Observable<Topic[]> {
         const subject = new Subject<Topic[]>();
@@ -16,6 +16,22 @@ export class MockApi implements IApi {
             <Topic> {
                 name: 'TopicTwo',
                 numPartitions: 2
+            },
+            <Topic> {
+                name: 'TopicThree',
+                numPartitions: 2
+            },
+            <Topic> {
+                name: 'TopicFour',
+                numPartitions: 2
+            },
+            <Topic> {
+                name: 'TopicFive',
+                numPartitions: 4
+            },
+            <Topic> {
+                name: 'TopicSix',
+                numPartitions: 1
             }
         ];
 
