@@ -11,7 +11,7 @@ interface ITopicListProps {
     loadAllTopics: any;
 }
 
-class TopicList extends React.Component<ITopicListProps, {}> {
+export class TopicList extends React.Component<ITopicListProps, {}> {
 
     componentDidMount() {
         this.props.loadAllTopics();
@@ -24,7 +24,6 @@ class TopicList extends React.Component<ITopicListProps, {}> {
             );
         });
 
-        console.log(this.props);
         return (
             <div>
                 <div className="sidebarHeader">Topics</div>

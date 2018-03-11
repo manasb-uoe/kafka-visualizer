@@ -1,0 +1,58 @@
+import * as React from 'react';
+import { mount } from 'enzyme';
+import { TopicList } from './TopicList';
+import { ITopicsState } from '../../reducers/initialState';
+import Topic from '../../domain/Topic';
+import TopicListItem from './TopicListItem';
+
+describe('<TopicList />', () => {
+
+    // tslint:disable-next-line:no-any
+    let loadAllTopics: any;
+
+    beforeEach(() => {
+        loadAllTopics = jest.fn();
+    });
+
+    it('should load topics on mount', () => {
+        const topicsState: ITopicsState = { isLoading: false, items: [], error: '' };
+
+        const wrapper = mount(<TopicList topics={topicsState} loadAllTopics={loadAllTopics} />);
+
+        expect(loadAllTopics.mock.calls.length).toBe(1);
+    });
+
+    it('should show loading text when loading topics', () => {
+        const topicsState: ITopicsState = { isLoading: true, items: [], error: '' };
+
+        const wrapper = mount(<TopicList topics={topicsState} loadAllTopics={loadAllTopics} />);
+
+        const listItems = wrapper.find('.sidebarListItem');
+        expect(listItems.length).toBe(1);
+        expect(listItems.get(0).props.children).toEqual('Loading...');
+    });
+
+    it('should not show any topics if none exist', () => {
+        const topicsState: ITopicsState = { isLoading: false, items: [], error: '' };
+
+        const wrapper = mount(<TopicList topics={topicsState} loadAllTopics={loadAllTopics} />);
+
+        const listItems = wrapper.find('.sidebarListItem');
+        expect(listItems.length).toBe(1);
+        expect(listItems.get(0).props.children).toEqual('No topics found');
+    });
+
+    it('should show list of topics', () => {
+        const topicItems: Topic[] = [{ name: 'TopicOne', numPartitions: 1 }, { name: 'TopicTwo', numPartitions: 2 }]
+        const topicsState: ITopicsState = { isLoading: false, items: topicItems, error: '' };
+
+        const wrapper = mount(<TopicList topics={topicsState} loadAllTopics={loadAllTopics} />);
+
+        const listItems = wrapper.find(TopicListItem);
+        expect(listItems.length).toBe(2);
+        expect(listItems.at(0).find('span').text()).toEqual(topicItems[0].name);
+        expect(listItems.at(0).find('.text-primary').text()).toEqual(topicItems[0].numPartitions.toString());
+        expect(listItems.at(1).find('span').text()).toEqual(topicItems[1].name);
+        expect(listItems.at(1).find('.text-primary').text()).toEqual(topicItems[1].numPartitions.toString());
+    });
+});
