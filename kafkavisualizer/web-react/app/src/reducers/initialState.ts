@@ -4,7 +4,8 @@ import Broker from '../domain/Broker';
 export interface ITopicsState {
     isLoading: boolean;
     items: Topic[];
-    error?: string;    
+    error?: string;
+    selected?: Topic;
 }
 
 export interface BrokersState {
@@ -21,13 +22,11 @@ export interface IAppState {
 const initialState: IAppState =  {
     topics: {
         isLoading: false,
-        items: [],
-        error: ''
+        items: []
     },
     brokers: {
         isLoading: false,
-        items: [],
-        error: ''
+        items: []
     }
 };
 

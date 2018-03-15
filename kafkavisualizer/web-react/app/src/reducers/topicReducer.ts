@@ -1,18 +1,23 @@
-import { ITopicAction } from './../actions/topicActions';
+import { LoadTopicsAction, SelectTopicAction } from './../actions/topicActions';
 import * as types from '../actions/actionTypes';
 import initialState, { ITopicsState } from './initialState';
+import { Action } from 'redux';
 
-// tslint:disable-next-line:no-any
-export default function topicReducer(state: ITopicsState = initialState.topics, action: ITopicAction): ITopicsState {
+export default function topicReducer(state: ITopicsState = initialState.topics, action: Action): ITopicsState {
+
     switch (action.type) {
         case types.LOAD_ALL_TOPICS_STARTED:
-            return { isLoading: true, items: [], error: undefined };
+            return { isLoading: true, items: [], error: undefined, selected: undefined };
 
         case types.LOAD_ALL_TOPICS_SUCCESS:
-            return { isLoading: false, items: action.topics, error: undefined };
+            return { isLoading: false, items: (action as LoadTopicsAction).topics, 
+                error: undefined, selected: undefined };
 
         case types.LOAD_ALL_TOPICS_FAILURE:
-            return { isLoading: false, items: [], error: action.error };
+            return { isLoading: false, items: [], error: (action as LoadTopicsAction).error, selected: undefined };
+
+        case types.SELECT_TOPIC:
+            return { ...state, selected: (action as SelectTopicAction).topic };
 
         default:
             return state;

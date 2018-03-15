@@ -9,15 +9,18 @@ describe('<TopicList />', () => {
 
     // tslint:disable-next-line:no-any
     let loadAllTopics: any;
+    // tslint:disable-next-line:no-any
+    let selectTopic: any;
 
     beforeEach(() => {
         loadAllTopics = jest.fn();
+        selectTopic = jest.fn();
     });
 
     it('should load topics on mount', () => {
         const topicsState: ITopicsState = { isLoading: false, items: [], error: '' };
 
-        mount(<TopicList topics={topicsState} loadAllTopics={loadAllTopics} />);
+        mount(<TopicList topics={topicsState} loadAllTopics={loadAllTopics} selectTopic={selectTopic} />);
 
         expect(loadAllTopics.mock.calls.length).toBe(1);
     });
@@ -25,7 +28,7 @@ describe('<TopicList />', () => {
     it('should show loading text when loading topics', () => {
         const topicsState: ITopicsState = { isLoading: true, items: [], error: '' };
 
-        const wrapper = mount(<TopicList topics={topicsState} loadAllTopics={loadAllTopics} />);
+        const wrapper = mount(<TopicList topics={topicsState} loadAllTopics={loadAllTopics} selectTopic={selectTopic} />);
 
         const listItems = wrapper.find('.sidebarListItem');
         expect(listItems.length).toBe(1);
@@ -35,7 +38,7 @@ describe('<TopicList />', () => {
     it('should not show any topics if none exist', () => {
         const topicsState: ITopicsState = { isLoading: false, items: [], error: '' };
 
-        const wrapper = mount(<TopicList topics={topicsState} loadAllTopics={loadAllTopics} />);
+        const wrapper = mount(<TopicList topics={topicsState} loadAllTopics={loadAllTopics} selectTopic={selectTopic} />);
 
         const listItems = wrapper.find('.sidebarListItem');
         expect(listItems.length).toBe(1);
@@ -46,7 +49,7 @@ describe('<TopicList />', () => {
         const topicItems: Topic[] = [{ name: 'TopicOne', numPartitions: 1 }, { name: 'TopicTwo', numPartitions: 2 }];
         const topicsState: ITopicsState = { isLoading: false, items: topicItems, error: '' };
 
-        const wrapper = mount(<TopicList topics={topicsState} loadAllTopics={loadAllTopics} />);
+        const wrapper = mount(<TopicList topics={topicsState} loadAllTopics={loadAllTopics} selectTopic={selectTopic} />);
 
         const listItems = wrapper.find(TopicListItem);
         expect(listItems.length).toBe(2);

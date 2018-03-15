@@ -4,20 +4,24 @@ import * as types from '../actions/actionTypes';
 import api from '../api/Api';
 import { Dispatch } from 'react-redux';
 
-export interface ITopicAction extends Action {
+export interface LoadTopicsAction extends Action {
     topics: Topic[];
     error: string;
 }
 
-export function loadAllTopicsStarted(): ITopicAction {
-    return {type: types.LOAD_ALL_TOPICS_STARTED, topics: [], error: '', };
+export interface SelectTopicAction extends Action {
+    topic: Topic;
 }
 
-export function loadAllTopicsSuccess(topics: Array<Topic>): ITopicAction {
+export function loadAllTopicsStarted(): LoadTopicsAction {
+    return { type: types.LOAD_ALL_TOPICS_STARTED, topics: [], error: '', };
+}
+
+export function loadAllTopicsSuccess(topics: Array<Topic>): LoadTopicsAction {
     return { type: types.LOAD_ALL_TOPICS_SUCCESS, topics: topics, error: '' };
 }
 
-export function loadAllTopicsFailure(error: string): ITopicAction {
+export function loadAllTopicsFailure(error: string): LoadTopicsAction {
     return { type: types.LOAD_ALL_TOPICS_FAILURE, topics: [], error: error };
 }
 
@@ -30,4 +34,8 @@ export function loadAllTopics() {
                 topics => dispatch(loadAllTopicsSuccess(topics)),
                 error => dispatch(loadAllTopicsFailure(error)));
     };
+}
+
+export function selectTopic(topic: Topic): SelectTopicAction {
+    return { type: types.SELECT_TOPIC, topic: topic };
 }

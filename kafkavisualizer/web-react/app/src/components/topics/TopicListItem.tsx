@@ -3,11 +3,13 @@ import Topic from '../../domain/Topic';
 
 interface ITopicListItemProps {
     topic: Topic;
+    isSelected: boolean;
+    onClick: () => void;
 }
 
-export default function TopicListItem({ topic }: ITopicListItemProps) {
+export default function TopicListItem({ topic, isSelected, onClick }: ITopicListItemProps) {
     return (
-        <div className="sidebarListItem pointable selectable">
+        <div onClick={onClick} className={'sidebarListItem pointable selectable ' + (isSelected ? 'selected' : '')}>
             <div>
                 <i className="fa fa-rss" aria-hidden="true" />
                 <span style={{ paddingLeft: '10px' }}>{topic.name}</span>
