@@ -40,6 +40,7 @@ export class TopicList extends React.Component<ITopicListProps, TopicListState> 
                 <TopicListItem
                     key={index}
                     topic={topic}
+                    searchTerm={this.state.searchTerm}
                     isSelected={_.isEqual(topic, this.props.topics.selectedTopic)}
                     onClick={() => { this.props.selectTopic(topic); }}
                 />
