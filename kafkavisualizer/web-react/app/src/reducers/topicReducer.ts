@@ -7,17 +7,17 @@ export default function topicReducer(state: ITopicsState = initialState.topics, 
 
     switch (action.type) {
         case types.LOAD_ALL_TOPICS_STARTED:
-            return { isLoading: true, items: [], error: undefined, selected: undefined };
+            return { isLoading: true, items: [], error: undefined, selectedTopic: undefined };
 
         case types.LOAD_ALL_TOPICS_SUCCESS:
             return { isLoading: false, items: (action as LoadTopicsAction).topics, 
-                error: undefined, selected: undefined };
+                error: undefined, selectedTopic: undefined };
 
         case types.LOAD_ALL_TOPICS_FAILURE:
-            return { isLoading: false, items: [], error: (action as LoadTopicsAction).error, selected: undefined };
+            return { isLoading: false, items: [], error: (action as LoadTopicsAction).error, selectedTopic: undefined };
 
         case types.SELECT_TOPIC:
-            return { ...state, selected: (action as SelectTopicAction).topic };
+            return { ...state, selectedTopic: (action as SelectTopicAction).topic };
 
         default:
             return state;

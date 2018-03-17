@@ -76,7 +76,7 @@ describe('<TopicList />', () => {
 
     it('should highlight selected topic', () => {
         const topicItems: Topic[] = [{ name: 'TopicOne', numPartitions: 1 }];
-        const topicsState: ITopicsState = { isLoading: false, items: topicItems, error: '', selected: topicItems[0] };
+        const topicsState: ITopicsState = { isLoading: false, items: topicItems, error: '', selectedTopic: topicItems[0] };
 
         const wrapper = mount(<TopicList topics={topicsState} loadAllTopics={loadAllTopics} selectTopic={selectTopic} />);
         

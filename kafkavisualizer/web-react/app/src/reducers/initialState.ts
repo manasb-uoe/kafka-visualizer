@@ -1,11 +1,19 @@
 import Topic  from '../domain/Topic';
 import Broker from '../domain/Broker';
+import TopicMessage from '../domain/TopicMessage';
 
 export interface ITopicsState {
     isLoading: boolean;
     items: Topic[];
     error?: string;
-    selected?: Topic;
+    selectedTopic?: Topic;
+    selectedPartition?: number;
+}
+
+export interface TopicMessagesState {
+    isLoading: boolean;
+    items: TopicMessage[];
+    error?: string;
 }
 
 export interface BrokersState {
@@ -17,16 +25,22 @@ export interface BrokersState {
 export interface IAppState {
     topics: ITopicsState;
     brokers: BrokersState;
+    topicMessages: TopicMessagesState;
 }
 
 const initialState: IAppState =  {
     topics: {
         isLoading: false,
-        items: []
+        items: [],
+        selectedPartition: 0
     },
     brokers: {
         isLoading: false,
         items: []
+    },
+    topicMessages: {
+        isLoading: false,
+        items: [],
     }
 };
 

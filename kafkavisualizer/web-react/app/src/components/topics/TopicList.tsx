@@ -24,7 +24,7 @@ export class TopicList extends React.Component<ITopicListProps, {}> {
                 <TopicListItem
                     key={index}
                     topic={topic}
-                    isSelected={_.isEqual(topic, this.props.topics.selected)}
+                    isSelected={_.isEqual(topic, this.props.topics.selectedTopic)}
                     onClick={() => {this.props.selectTopic(topic); }}
                 />
             );
