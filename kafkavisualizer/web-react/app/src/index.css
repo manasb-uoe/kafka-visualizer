@@ -1,7 +1,14 @@
+:root {
+  --borderColor: #eee;
+}
 body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+}
+
+.form-control {
+  border-color: var(--borderColor);
 }
 
 .pointable {
