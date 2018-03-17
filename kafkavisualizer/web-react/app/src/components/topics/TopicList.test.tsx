@@ -58,4 +58,29 @@ describe('<TopicList />', () => {
         expect(listItems.at(1).find('span').text()).toEqual(topicItems[1].name);
         expect(listItems.at(1).find('.text-primary').text()).toEqual(topicItems[1].numPartitions.toString());
     });
+
+    it('should select topic on click', () => {
+        const topicItems: Topic[] = [{ name: 'TopicOne', numPartitions: 1 }];
+        const topicsState: ITopicsState = { isLoading: false, items: topicItems, error: '' };
+
+        const wrapper = mount(<TopicList topics={topicsState} loadAllTopics={loadAllTopics} selectTopic={selectTopic} />);
+    
+        const listItem = wrapper.find(TopicListItem).at(0);
+        expect(selectTopic.mock.calls.length).toBe(0);   
+
+        listItem.simulate('click');
+        
+        expect(selectTopic.mock.calls.length).toBe(1);
+        expect(selectTopic.mock.calls[0][0]).toEqual(topicItems[0]);
+    });
+
+    it('should highlight selected topic', () => {
+        const topicItems: Topic[] = [{ name: 'TopicOne', numPartitions: 1 }];
+        const topicsState: ITopicsState = { isLoading: false, items: topicItems, error: '', selected: topicItems[0] };
+
+        const wrapper = mount(<TopicList topics={topicsState} loadAllTopics={loadAllTopics} selectTopic={selectTopic} />);
+        
+        const listItem = wrapper.find(TopicListItem).at(0);
+        expect(listItem.find('.selected').length).toBe(1);        
+    });
 });

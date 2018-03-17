@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './App.css';
 import TopicList from '../topics/TopicList';
-import BrokerList  from '../brokers/BrokerList';
+import BrokerList from '../brokers/BrokerList';
 
 class App extends React.Component {
   render() {
