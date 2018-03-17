@@ -13,6 +13,10 @@ export interface SelectTopicAction extends Action {
     topic: Topic;
 }
 
+export interface SelectPartitionAction extends Action {
+    paritition: number;
+}
+
 export function loadAllTopicsStarted(): LoadTopicsAction {
     return { type: types.LOAD_ALL_TOPICS_STARTED, topics: [], error: '', };
 }
@@ -38,4 +42,8 @@ export function loadAllTopics() {
 
 export function selectTopic(topic: Topic): SelectTopicAction {
     return { type: types.SELECT_TOPIC, topic: topic };
+}
+
+export function selectPartition(partition: number): SelectPartitionAction {
+    return { type: types.SELECT_PARITITON, paritition: partition };
 }

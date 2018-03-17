@@ -31,8 +31,7 @@ export interface IAppState {
 const initialState: IAppState =  {
     topics: {
         isLoading: false,
-        items: [],
-        selectedPartition: 0
+        items: []
     },
     brokers: {
         isLoading: false,

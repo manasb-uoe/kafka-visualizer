@@ -42,3 +42,14 @@ body {
   flex-direction: row;
   justify-content: space-between;
 }
+
+.pageHeaderContainer {
+  padding-top: 15px;
+  padding-bottom: 5px;
+  border-bottom: 4px solid var(--borderColor);
+  margin-bottom: 10px;
+}
+
+.pageHeader {
+  font-weight: 400;
+}
