@@ -2,18 +2,30 @@ import * as React from 'react';
 import { IAppState, TopicMessagesState } from '../../reducers/initialState';
 import Topic from '../../domain/Topic';
 import { connect, Dispatch } from 'react-redux';
-import { SelectPartitionAction, selectPartition } from '../../actions/topicActions';
+import { SelectPartitionAction, selectPartition, loadTopicMessages, LoadTopicMessagesAction } from '../../actions/topicActions';
+import * as _ from 'lodash';
+import MessageListItem from './MessageListItem';
 
 interface TopicMessagesProps {
     messages: TopicMessagesState;
     selectedTopic: Topic;
     selectedPartition: number;
     selectPartition: (partition: number) => SelectPartitionAction;
+    loadMessages: (topic: Topic, partition: number, query: string) => LoadTopicMessagesAction;
 }
 
 export class TopicMessages extends React.Component<TopicMessagesProps, {}> {
 
+    componentWillReceiveProps(nextProps: TopicMessagesProps) {
+        if (nextProps.selectedTopic && nextProps.selectedPartition !== Number.MIN_VALUE &&
+            (!_.isEqual(this.props.selectedTopic, nextProps.selectedTopic) || this.props.selectedPartition !== nextProps.selectedPartition)) {
+            this.props.loadMessages(nextProps.selectedTopic, nextProps.selectedPartition, '');
+        }
+    }
+
     render() {
+        const messages = this.props.messages.items.map((message, index) => <MessageListItem key={index} message={message} />);
+
         return (
             <div>
                 {!this.props.selectedTopic && <div style={{ marginTop: '15px' }}>Not topic selected</div>}
@@ -29,6 +41,9 @@ export class TopicMessages extends React.Component<TopicMessagesProps, {}> {
                         </div>
                     </h6 >
                 </div >}
+                {this.props.messages.isLoading && <div style={{ marginTop: '10px' }}>Loading...</div>}
+                {this.props.selectedTopic && !this.props.messages.isLoading && this.props.messages.items.length === 0 && <div style={{ marginTop: '10px' }}>No messages found</div>}
+                {this.props.messages.items.length !== 0 && <div className="list-group">{messages}</div>}
             </div>
         );
     }
@@ -63,7 +78,8 @@ function mapStateToProps(state: IAppState) {
 // tslint:disable-next-line:no-any
 function mapDispatchToProps(dispatch: Dispatch<any>) {
     return {
-        selectPartition: (partition: number) => dispatch(selectPartition(partition))
+        selectPartition: (partition: number) => dispatch(selectPartition(partition)),
+        loadMessages: (topic: Topic, partition: number, query: string) => dispatch(loadTopicMessages(topic, partition, query))
     };
 }
 

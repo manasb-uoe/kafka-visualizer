@@ -14,7 +14,8 @@
     "react-scripts-ts": "2.13.0",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
-    "rxjs": "^5.5.6"
+    "rxjs": "^5.5.6",
+    "vkbeautify": "^0.99.3"
   },
   "scripts": {
     "start": "react-scripts-ts start",
@@ -32,6 +33,7 @@
     "@types/react-dom": "^16.0.4",
     "@types/react-router-dom": "^4.2.4",
     "@types/react-test-renderer": "^16.0.1",
+    "@types/vkbeautify": "^0.99.2",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "react-test-renderer": "^16.2.0",

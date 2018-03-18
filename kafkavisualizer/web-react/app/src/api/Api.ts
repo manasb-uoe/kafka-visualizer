@@ -3,20 +3,33 @@ import Topic from '../domain/Topic';
 import * as envVars from '../constants/envVariables';
 import { MockApi } from './MockApi';
 import Broker from '../domain/Broker';
+import TopicMessage from '../domain/TopicMessage';
 
 export interface IApi {
     getTopics(): Observable<Array<Topic>>;
     getBrokers(): Observable<Array<Broker>>;
+    getTopicMessages(topic: Topic, partition: number, query: string): Observable<Array<TopicMessage>>;
 }
 
 class Api implements IApi {
-    
+
     public getTopics(): Observable<Array<Topic>> {
         return this.getVersionedResponseStream('/api/topics', 2000);
     }
 
     public getBrokers(): Observable<Broker[]> {
         return this.getVersionedResponseStream('/api/brokers', 2000);
+    }
+
+    getTopicMessages(topic: Topic, partition: number, query: string): Observable<TopicMessage[]> {
+        if (!query) {
+            query = '';
+        }
+
+        return this.getVersionedResponseStream(
+            `/api/topics/${topic.name}/${partition}?query=${query}&`,
+            2000
+        );
     }
 
     private getVersionedResponseStream<T>(endpoint: string, period: number): Observable<T> {

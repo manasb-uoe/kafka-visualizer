@@ -11,8 +11,7 @@ export default function topicReducer(state: ITopicsState = initialState.topics, 
 
         case types.LOAD_ALL_TOPICS_SUCCESS:
             return {
-                isLoading: false, items: (action as LoadTopicsAction).topics,
-                error: undefined, selectedTopic: undefined, selectedPartition: Number.MIN_VALUE
+                ...state, isLoading: false, items: (action as LoadTopicsAction).topics, error: undefined, selectedPartition: 0
             };
 
         case types.LOAD_ALL_TOPICS_FAILURE:

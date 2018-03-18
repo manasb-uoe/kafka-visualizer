@@ -2,12 +2,23 @@ import { IApi } from './Api';
 import { Observable, Subject } from 'rxjs';
 import Topic from '../domain/Topic';
 import Broker from '../domain/Broker';
+import TopicMessage from '../domain/TopicMessage';
 
 export class MockApi implements IApi {
 
-    private static readonly DELAY = 0;
+    private static readonly DELAY = 200;
 
-    public getTopics(): Observable<Topic[]>  {
+    private readonly messages: TopicMessage[] = [
+        { topic: 'TopicOne', offset: 0, partition: 0, timestamp: Date.now(), value: '{ "name":"John", "age":31, "city":"New York" }', key: 'this is a key' },
+        { topic: 'TopicOne', offset: 1, partition: 0, timestamp: Date.now(), value: '<person><name>Mr Mate</name><age>12</age></person>', key: 'key2' },
+        { topic: 'TopicTwo', offset: 0, partition: 0, timestamp: Date.now(), value: '{ "name":"John", "age":31, "city":"New York" }', key: 'key3' },
+        { topic: 'TopicTwo', offset: 1, partition: 0, timestamp: Date.now(), value: '{ "name":"John", "age":31, "city":"New York" }', key: 'bla' },
+        { topic: 'TopicTwo', offset: 3, partition: 0, timestamp: Date.now(), value: '{ "name":"John", "age":31, "city":"New York" }', key: 'heueu' },
+        { topic: 'TopicFour', offset: 2, partition: 3, timestamp: Date.now(), value: '{ "name":"John", "age":31, "city":"New York" }', key: 'key' },
+        { topic: 'TopicThree', offset: 0, partition: 0, timestamp: Date.now(), value: '{ "name":"John", "age":31, "city":"New York" }', key: 'key' }
+    ];
+
+    public getTopics(): Observable<Topic[]> {
         const subject = new Subject<Topic[]>();
         const topics: Topic[] = [
             { name: 'TopicOne', numPartitions: 1 },
@@ -31,6 +42,22 @@ export class MockApi implements IApi {
 
         setTimeout(() => subject.next(brokers), MockApi.DELAY);
 
+        return subject.asObservable();
+    }
+
+    getTopicMessages(topic: Topic, partition: number, query: string): Observable<TopicMessage[]> {
+        const subject = new Subject<TopicMessage[]>();
+
+        var filter = (messages: TopicMessage[]) => {
+            return query ?
+                this.messages.filter(message => message.topic === topic.name && message.partition === partition && message.value.includes(query)) :
+                this.messages.filter(message => message.topic === topic.name && message.partition === partition);
+        };
+
+        setTimeout(
+            () => subject.next(filter(this.messages)),
+            MockApi.DELAY);
+            
         return subject.asObservable();
     }
 }
