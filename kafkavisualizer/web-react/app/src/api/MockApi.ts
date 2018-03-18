@@ -5,7 +5,7 @@ import Broker from '../domain/Broker';
 
 export class MockApi implements IApi {
 
-    private static readonly DELAY = 1000;
+    private static readonly DELAY = 0;
 
     public getTopics(): Observable<Topic[]>  {
         const subject = new Subject<Topic[]>();
@@ -17,7 +17,7 @@ export class MockApi implements IApi {
         ];
 
         setTimeout(() => subject.next(topics), MockApi.DELAY);
-        setTimeout(() => subject.next(topics.concat({ name: 'ONEONEONE', numPartitions: 1 })), 6000);
+        setTimeout(() => subject.next(topics.concat({ name: 'AnotherTopicThatGotAddedLater', numPartitions: 1 })), 6000);
         return subject.asObservable();
     }
 
