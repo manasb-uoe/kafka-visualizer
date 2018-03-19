@@ -4,11 +4,13 @@ import * as envVars from '../constants/envVariables';
 import { MockApi } from './MockApi';
 import Broker from '../domain/Broker';
 import TopicMessage from '../domain/TopicMessage';
+import RecordMetadata from '../domain/RecordMetadata';
 
 export interface IApi {
     getTopics(): Observable<Array<Topic>>;
     getBrokers(): Observable<Array<Broker>>;
     getTopicMessages(topic: Topic, partition: number, query: string): Observable<Array<TopicMessage>>;
+    publishTopicMessage(topic: Topic, key: string, value: string): Observable<RecordMetadata>;
 }
 
 class Api implements IApi {
@@ -21,7 +23,30 @@ class Api implements IApi {
         return this.getVersionedResponseStream('/api/brokers', 2000);
     }
 
-    getTopicMessages(topic: Topic, partition: number, query: string): Observable<TopicMessage[]> {
+    public publishTopicMessage(topic: Topic, key: string, value: string): Observable<RecordMetadata> {
+        const body = new URLSearchParams();
+        body.append('key', key);
+        body.append('value', value);
+
+        const subject = new Subject<RecordMetadata>();
+
+        fetch(`/api/topics/${topic.name}`, {
+            method: 'post',
+            body: body.toString()
+        })
+            .then((response) => response.json())
+            .then(jsonResponse => {
+                subject.next({
+                    offset: jsonResponse.offset,
+                    partition: jsonResponse.topicPartition.partition
+                });
+            })
+            .catch(error => subject.error(error));
+
+        return subject.asObservable();
+    }
+
+    public getTopicMessages(topic: Topic, partition: number, query: string): Observable<TopicMessage[]> {
         if (!query) {
             query = '';
         }

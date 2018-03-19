@@ -6,6 +6,7 @@
     "@types/react-redux": "^5.0.15",
     "bootstrap": "^4.0.0",
     "font-awesome": "^4.7.0",
+    "jquery": "^3.3.1",
     "lodash": "^4.17.5",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
@@ -24,9 +25,11 @@
     "eject": "react-scripts-ts eject"
   },
   "devDependencies": {
+    "@types/bootstrap": "^4.0.1",
     "@types/enzyme": "^3.1.9",
     "@types/enzyme-adapter-react-16": "^1.0.2",
     "@types/jest": "^22.2.0",
+    "@types/jquery": "^3.3.1",
     "@types/lodash": "^4.14.104",
     "@types/node": "^9.4.6",
     "@types/react": "^16.0.38",

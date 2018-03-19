@@ -5,6 +5,7 @@ import { connect, Dispatch } from 'react-redux';
 import { SelectPartitionAction, selectPartition, loadTopicMessages, LoadTopicMessagesAction } from '../../actions/topicActions';
 import * as _ from 'lodash';
 import MessageListItem from './MessageListItem';
+import { MessagePublisher } from './MessagePublisher';
 
 interface TopicMessagesProps {
     messages: TopicMessagesState;
@@ -17,6 +18,7 @@ interface TopicMessagesProps {
 export class TopicMessages extends React.Component<TopicMessagesProps, {}> {
 
     private searchTerm: string = '';
+    private messagePublisher: MessagePublisher | null;
 
     componentWillReceiveProps(nextProps: TopicMessagesProps) {
         if (nextProps.selectedTopic && nextProps.selectedPartition !== Number.MIN_VALUE &&
@@ -46,13 +48,15 @@ export class TopicMessages extends React.Component<TopicMessagesProps, {}> {
 
                 {this.props.selectedTopic &&
                     <div style={{ marginBottom: '10px', display: 'flex', flexDirection: 'row' }}>
-                        <button className="btn btn-success btn-sm pointable" style={{ marginRight: '10px' }}>Publish Message</button>
+                        <button onClick={(event) => this.messagePublisher && this.messagePublisher.show()} className="btn btn-success btn-sm pointable" style={{ marginRight: '10px' }}>Publish Message</button>
                         <input onChange={(event) => this.onSearchTermChanged(event.target.value)} onKeyPress={(event) => this.onKeyPressedInSearch(event)} className="form-control form-control-sm" placeholder="Search" />
                     </div>}
 
                 {this.props.messages.isLoading && <div style={{ marginTop: '10px' }}>Loading...</div>}
                 {this.props.selectedTopic && !this.props.messages.isLoading && this.props.messages.items.length === 0 && <div style={{ marginTop: '10px' }}>No messages found</div>}
                 {this.props.messages.items.length !== 0 && <div className="list-group">{messages}</div>}
+
+                <MessagePublisher ref={(ref) => this.messagePublisher = ref} topic={this.props.selectedTopic} partition={this.props.selectedPartition} />
             </div >
         );
     }

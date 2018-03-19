@@ -3,6 +3,7 @@ import { Observable, Subject } from 'rxjs';
 import Topic from '../domain/Topic';
 import Broker from '../domain/Broker';
 import TopicMessage from '../domain/TopicMessage';
+import RecordMetadata from '../domain/RecordMetadata';
 
 export class MockApi implements IApi {
 
@@ -17,6 +18,24 @@ export class MockApi implements IApi {
         { topic: 'TopicFour', offset: 2, partition: 3, timestamp: Date.now(), value: '{ "name":"John", "age":31, "city":"New York" }', key: 'key' },
         { topic: 'TopicThree', offset: 0, partition: 0, timestamp: Date.now(), value: '{ "name":"John", "age":31, "city":"New York" }', key: 'key' }
     ];
+    private messagesSubject: Subject<TopicMessage[]>;
+
+    public publishTopicMessage(topic: Topic, key: string, value: string): Observable<RecordMetadata> {
+        this.messages.push({
+            topic: topic.name,
+            offset: 0,
+            partition: 0,
+            timestamp: Date.now(),
+            value: value,
+            key: key
+        });
+        this.messagesSubject.next(this.messages);
+
+        const subject = new Subject<RecordMetadata>();
+        setTimeout(() => subject.next(<RecordMetadata> { offset: 0, partition: 0 }), MockApi.DELAY);
+
+        return subject.asObservable();
+    }
 
     public getTopics(): Observable<Topic[]> {
         const subject = new Subject<Topic[]>();
@@ -45,9 +64,8 @@ export class MockApi implements IApi {
         return subject.asObservable();
     }
 
-    getTopicMessages(topic: Topic, partition: number, query: string): Observable<TopicMessage[]> {
-        const subject = new Subject<TopicMessage[]>();
-
+    public getTopicMessages(topic: Topic, partition: number, query: string): Observable<TopicMessage[]> {
+        this.messagesSubject = new Subject<TopicMessage[]>();
         var filter = (messages: TopicMessage[]) => {
             return query ?
                 this.messages.filter(message => message.topic === topic.name && message.partition === partition && message.value.toLowerCase().trim().includes(query.toLowerCase().trim())) :
@@ -55,9 +73,9 @@ export class MockApi implements IApi {
         };
 
         setTimeout(
-            () => subject.next(filter(this.messages)),
+            () => this.messagesSubject.next(filter(this.messages)),
             MockApi.DELAY);
-            
-        return subject.asObservable();
+
+        return this.messagesSubject.asObservable();
     }
 }
