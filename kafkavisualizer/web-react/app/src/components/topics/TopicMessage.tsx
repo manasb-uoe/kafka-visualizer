@@ -16,15 +16,17 @@ interface TopicMessagesProps {
 
 export class TopicMessages extends React.Component<TopicMessagesProps, {}> {
 
+    private searchTerm: string = '';
+
     componentWillReceiveProps(nextProps: TopicMessagesProps) {
         if (nextProps.selectedTopic && nextProps.selectedPartition !== Number.MIN_VALUE &&
             (!_.isEqual(this.props.selectedTopic, nextProps.selectedTopic) || this.props.selectedPartition !== nextProps.selectedPartition)) {
-            this.props.loadMessages(nextProps.selectedTopic, nextProps.selectedPartition, '');
+            this.props.loadMessages(nextProps.selectedTopic, nextProps.selectedPartition, this.searchTerm);
         }
     }
 
     render() {
-        const messages = this.props.messages.items.map((message, index) => <MessageListItem key={index} message={message} />);
+        const messages = this.props.messages.items.map((message, index) => <MessageListItem key={index} message={message} searchTerm={this.searchTerm} />);
 
         return (
             <div>
@@ -41,11 +43,28 @@ export class TopicMessages extends React.Component<TopicMessagesProps, {}> {
                         </div>
                     </h6 >
                 </div >}
+
+                {this.props.selectedTopic &&
+                    <div style={{ marginBottom: '10px', display: 'flex', flexDirection: 'row' }}>
+                        <button className="btn btn-success btn-sm pointable" style={{ marginRight: '10px' }}>Publish Message</button>
+                        <input onChange={(event) => this.onSearchTermChanged(event.target.value)} onKeyPress={(event) => this.onKeyPressedInSearch(event)} className="form-control form-control-sm" placeholder="Search" />
+                    </div>}
+
                 {this.props.messages.isLoading && <div style={{ marginTop: '10px' }}>Loading...</div>}
                 {this.props.selectedTopic && !this.props.messages.isLoading && this.props.messages.items.length === 0 && <div style={{ marginTop: '10px' }}>No messages found</div>}
                 {this.props.messages.items.length !== 0 && <div className="list-group">{messages}</div>}
-            </div>
+            </div >
         );
+    }
+
+    private onSearchTermChanged(searchTerm: string) {
+        this.searchTerm = searchTerm;
+    }
+
+    private onKeyPressedInSearch(event: React.KeyboardEvent<HTMLInputElement>) {
+        if (event.key === 'Enter') {
+            this.props.loadMessages(this.props.selectedTopic, this.props.selectedPartition, this.searchTerm);
+        }
     }
 
     private onPartitionChanged(event: React.ChangeEvent<HTMLSelectElement>): void {

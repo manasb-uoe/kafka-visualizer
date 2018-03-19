@@ -50,7 +50,7 @@ export class MockApi implements IApi {
 
         var filter = (messages: TopicMessage[]) => {
             return query ?
-                this.messages.filter(message => message.topic === topic.name && message.partition === partition && message.value.includes(query)) :
+                this.messages.filter(message => message.topic === topic.name && message.partition === partition && message.value.toLowerCase().trim().includes(query.toLowerCase().trim())) :
                 this.messages.filter(message => message.topic === topic.name && message.partition === partition);
         };
 

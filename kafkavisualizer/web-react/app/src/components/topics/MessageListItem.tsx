@@ -1,9 +1,11 @@
 import * as React from 'react';
 import TopicMessage from '../../domain/TopicMessage';
 import * as vkbeautify from 'vkbeautify';
+import StringUtils from '../../util/StringUtils';
 
 export interface MessageListItemProps {
     message: TopicMessage;
+    searchTerm: string;
 }
 
 interface MessageListItemState {
@@ -24,7 +26,7 @@ export default class MessageListItem extends React.Component<MessageListItemProp
                 <div className="pointable" style={{ padding: '5px' }} onClick={() => this.onClick()}>
                     <span className="text-primary" style={{ fontWeight: 'bold' }}>[{this.props.message.offset}]</span> -
                 <span className="text-success">{this.props.message.timestamp}</span> - <span className="text-danger">{this.props.message.key}</span>
-                    <div style={{ wordWrap: 'break-word' }}>{this.props.message.value}</div>
+                    <div dangerouslySetInnerHTML={{__html: StringUtils.markSearchTermInString(this.props.message.value, this.props.searchTerm)}} style={{ wordWrap: 'break-word' }}/>
                 </div>
                 <div>
                     {!this.state.isCollapsed && <pre>{prettifyMessage(this.props.message.value)}</pre>}
