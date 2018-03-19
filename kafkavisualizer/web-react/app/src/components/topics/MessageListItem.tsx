@@ -8,7 +8,7 @@ export interface MessageListItemProps {
 
 export default function MessageListItem({ message }: MessageListItemProps) {
     return (
-        <div className="selectable" style={{padding: '5px'}}>
+        <div style={{padding: '5px'}}>
             <span className="text-primary" style={{ fontWeight: 'bold' }}>[{message.offset}]</span> -
             <span className="text-success">{message.timestamp}</span> - <span className="text-danger">{message.key}</span>
             <pre style={{ wordWrap: 'break-word' }}>{prettifyMessage(message.value)}</pre>
