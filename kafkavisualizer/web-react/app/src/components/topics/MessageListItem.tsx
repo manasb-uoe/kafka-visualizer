@@ -6,14 +6,38 @@ export interface MessageListItemProps {
     message: TopicMessage;
 }
 
-export default function MessageListItem({ message }: MessageListItemProps) {
-    return (
-        <div style={{padding: '5px'}}>
-            <span className="text-primary" style={{ fontWeight: 'bold' }}>[{message.offset}]</span> -
-            <span className="text-success">{message.timestamp}</span> - <span className="text-danger">{message.key}</span>
-            <pre style={{ wordWrap: 'break-word' }}>{prettifyMessage(message.value)}</pre>
-        </div>
-    );
+interface MessageListItemState {
+    isCollapsed: boolean;
+}
+
+export default class MessageListItem extends React.Component<MessageListItemProps, MessageListItemState> {
+
+    // tslint:disable-next-line:no-any
+    constructor(props: MessageListItemProps, context: any) {
+        super(props, context);
+        this.state = { isCollapsed: true };
+    }
+
+    render() {
+        return (
+            <div style={{marginBottom: '10px'}}>
+                <div className="pointable" style={{ padding: '5px' }} onClick={() => this.onClick()}>
+                    <span className="text-primary" style={{ fontWeight: 'bold' }}>[{this.props.message.offset}]</span> -
+                <span className="text-success">{this.props.message.timestamp}</span> - <span className="text-danger">{this.props.message.key}</span>
+                    <div style={{ wordWrap: 'break-word' }}>{this.props.message.value}</div>
+                </div>
+                <div>
+                    {!this.state.isCollapsed && <pre>{prettifyMessage(this.props.message.value)}</pre>}
+                </div>
+            </div>
+        );
+    }
+
+    private onClick() {
+        this.setState((prevState, props) => {
+            return { isCollapsed: !prevState.isCollapsed };
+        });
+    }
 }
 
 function prettifyMessage(message: string) {
