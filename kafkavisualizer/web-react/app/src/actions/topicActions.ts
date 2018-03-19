@@ -4,6 +4,7 @@ import * as types from '../actions/actionTypes';
 import api from '../api/Api';
 import { Dispatch } from 'react-redux';
 import TopicMessage from '../domain/TopicMessage';
+import { ISubscription } from 'rxjs/Subscription';
 
 export interface LoadTopicsAction extends Action {
     topics: Topic[];
@@ -66,11 +67,17 @@ export function loadTopicMessagesStarted(): LoadTopicMessagesAction {
     return { type: types.LOAD_TOPIC_MESSAGES_STARTED, messages: [], error: '' };
 }
 
+let subscription: ISubscription;
+
 export function loadTopicMessages(topic: Topic, partition: number, query: string) {
     // tslint:disable-next-line:no-any
     return (dispatch: Dispatch<any>) => {
         dispatch(loadTopicMessagesStarted());
-        api.getTopicMessages(topic, partition, query)
+        if (subscription) {
+            subscription.unsubscribe();
+        }
+
+        subscription = api.getTopicMessages(topic, partition, query)
             .subscribe(
                 messages => dispatch(loadTopicMessagesSuccess(messages)),
                 error => dispatch(loadTopicMessagesFailure(error))
