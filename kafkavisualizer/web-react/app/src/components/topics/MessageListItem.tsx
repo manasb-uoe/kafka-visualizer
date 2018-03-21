@@ -22,9 +22,9 @@ export default class MessageListItem extends React.Component<MessageListItemProp
 
     render() {
         return (
-            <div style={{marginBottom: '10px'}}>
-                <div className="pointable" style={{ padding: '5px' }} onClick={() => this.onClick()}>
-                    <span className="text-primary" style={{ fontWeight: 'bold' }}>[{this.props.message.offset}]</span> -
+            <div style={{marginBottom: '10px', borderBottom: '1px solid var(--borderColor)'}}>
+                <div className="selectable pointable" onClick={() => this.onClick()}>
+                    <span className="text-primary">({this.props.message.offset})</span> -
                 <span className="text-success">{this.props.message.timestamp}</span> - <span className="text-danger">{this.props.message.key}</span>
                     <div dangerouslySetInnerHTML={{__html: StringUtils.markSearchTermInString(this.props.message.value, this.props.searchTerm)}} style={{ wordWrap: 'break-word' }}/>
                 </div>

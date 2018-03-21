@@ -41,5 +41,10 @@
     "enzyme-adapter-react-16": "^1.1.1",
     "react-test-renderer": "^16.2.0",
     "typescript": "^2.7.2"
+  },
+  "proxy": {
+    "/api/*": {
+      "target": "http://localhost:8080"
+    }
   }
 }

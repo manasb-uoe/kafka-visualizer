@@ -1,7 +1,5 @@
 import { Observable, Subject } from 'rxjs';
 import Topic from '../domain/Topic';
-import * as envVars from '../constants/envVariables';
-import { MockApi } from './MockApi';
 import Broker from '../domain/Broker';
 import TopicMessage from '../domain/TopicMessage';
 import RecordMetadata from '../domain/RecordMetadata';
@@ -67,7 +65,13 @@ class Api implements IApi {
 
         const handler = () => {
             fetch(isVersioned ? this.createVersionedEndpoint(endpoint, version) : endpoint)
-                .then(response => response.json())
+                .then(response => {
+                    if (response.status === 304) {
+                        throw new Error(response.status.toString());
+                    } else {
+                        return response.json();
+                    }
+                })
                 .then(
                     response => {
                         if (isVersioned) {
@@ -78,14 +82,14 @@ class Api implements IApi {
                         }
 
                         setTimeout(handler, period);
-                    },
-                    error => {
-                        if (error.status !== 304) {
-                            console.error(error);
-                        }
+                    })
+                .catch(error => {
+                    if (error.message !== '304') {
+                        console.error(error);
+                    }
 
-                        setTimeout(handler, period);
-                    });
+                    setTimeout(handler, period);
+                });
         };
 
         handler();
@@ -101,11 +105,4 @@ class Api implements IApi {
     }
 }
 
-let api: IApi;
-if (process.env.NODE_ENV === envVars.ENVIRONMENT.DEV) {
-    api = new MockApi();
-} else {
-    api = new Api();
-}
-
-export default api;
+export default new Api();

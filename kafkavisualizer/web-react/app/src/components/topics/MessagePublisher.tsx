@@ -14,6 +14,7 @@ interface MessagePublisherState {
     value: string;
     recordMetadata?: RecordMetadata;
     error?: string;
+    isLoading: boolean;
 }
 
 export class MessagePublisher extends React.Component<MessagePublisherProps, MessagePublisherState> {
@@ -23,7 +24,8 @@ export class MessagePublisher extends React.Component<MessagePublisherProps, Mes
         super(props, context);
         this.state = {
             key: '',
-            value: ''
+            value: '',
+            isLoading: false
         };
     }
 
@@ -57,7 +59,7 @@ export class MessagePublisher extends React.Component<MessagePublisherProps, Mes
                                     </div>
                                     <div style={{ textAlign: 'right' }}>
                                         <button onClick={() => this.clearForm()} type="button" className="btn btn-primary btn-sm">Clear</button>
-                                        <input type="submit" style={{ marginLeft: '5px' }} className="btn btn-success btn-sm" value="Publish" />
+                                        <input disabled={this.state.isLoading} type="submit" style={{ marginLeft: '5px' }} className="btn btn-success btn-sm" value="Publish" />
                                     </div>
                                     {this.state.recordMetadata && (
                                         <div className="text-success" style={{ marginTop: '10px' }}>Message successfully posted to partition
@@ -91,9 +93,10 @@ export class MessagePublisher extends React.Component<MessagePublisherProps, Mes
 
     private publishMessage(event: React.FormEvent<HTMLFormElement>): void {
         event.preventDefault();
+        this.setState({...this.state, isLoading: true});
         api.publishTopicMessage(this.props.topic, this.state.key, this.state.value).subscribe(
-            metadata => this.setState({ ...this.state, recordMetadata: metadata }),
-            error => this.setState({ ...this.state, error: error })
+            metadata => this.setState({ ...this.state, recordMetadata: metadata, isLoading: false }),
+            error => this.setState({ ...this.state, error: error, isLoading: false })
         );
     }
 
