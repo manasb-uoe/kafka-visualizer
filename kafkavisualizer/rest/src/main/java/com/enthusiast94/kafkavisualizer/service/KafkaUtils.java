@@ -30,8 +30,8 @@ public class KafkaUtils {
     }
 
     public ImmutableList<KafkaBroker> getAllBrokers() throws Exception {
-        ImmutableList.Builder<KafkaBroker> brokersBuilder = ImmutableList.builder();
-        ImmutableList<String> brokerIds = ImmutableList.copyOf(zkClient.getChildren("/brokers/ids"));
+        var brokersBuilder = ImmutableList.<KafkaBroker>builder();
+        var brokerIds = ImmutableList.copyOf(zkClient.getChildren("/brokers/ids"));
 
         for (String brokerId : brokerIds) {
             String jsonString;
@@ -40,8 +40,8 @@ public class KafkaUtils {
             } catch (Exception e) {
                 throw new Exception(String.format("Failed to fetch broker data for broker [%s]", brokerId));
             }
-            JsonObject json = jsonParser.parse(jsonString).getAsJsonObject();
-            KafkaBroker broker = new KafkaBroker(brokerId, json.get("host").getAsString(), json.get("port").getAsInt());
+            var json = jsonParser.parse(jsonString).getAsJsonObject();
+            var broker = new KafkaBroker(brokerId, json.get("host").getAsString(), json.get("port").getAsInt());
             brokersBuilder.add(broker);
         }
 
@@ -49,7 +49,7 @@ public class KafkaUtils {
     }
 
     public ImmutableList<KafkaTopic> getAllTopics() {
-        ImmutableList<String> topicNames = ImmutableList.copyOf(zkClient.getChildren("/brokers/topics"));
+        var topicNames = ImmutableList.copyOf(zkClient.getChildren("/brokers/topics"));
         return topicNames.stream()
                 .filter(topicName -> !topicName.equals("__consumer_offsets"))
                 .map(topicName -> new KafkaTopic(topicName, zkClient.getChildren("/brokers/topics/" +
@@ -58,22 +58,22 @@ public class KafkaUtils {
     }
 
     public ImmutableList<KafkaConsumerInfo> getAllConsumers() {
-        ImmutableList<GroupOverview> consumerGroups =
+        var consumerGroups =
                 ImmutableList.copyOf(JavaConversions.asJavaCollection(adminClient.listAllConsumerGroupsFlattened()));
 
-        ImmutableList.Builder<KafkaConsumerInfo> consumers = ImmutableList.builder();
+        var consumers = ImmutableList.<KafkaConsumerInfo>builder();
 
         consumerGroups.stream()
                 .filter(groupOverview -> !groupOverview.groupId().equals(KafkaStatics.GROUP_ID))
                 .forEach(consumerGroup -> {
-                    AdminClient.ConsumerGroupSummary consumerGroupSummary =
+                    var consumerGroupSummary =
                             adminClient.describeConsumerGroup(consumerGroup.groupId(), Duration.ofSeconds(10).toMillis());
 
                     if (!consumerGroupSummary.consumers().isDefined()) {
                         return;
                     }
 
-                    ImmutableList<AdminClient.ConsumerSummary> consumerSummaries = ImmutableList.copyOf(
+                    var consumerSummaries = ImmutableList.copyOf(
                             JavaConversions.asJavaCollection(consumerGroupSummary.consumers().get()));
 
                     if (consumerSummaries.isEmpty()) {

@@ -46,7 +46,7 @@ public class KafkaTopicsDataTracker {
             return Optional.of(new VersionedResponse<>(0, ImmutableList.of()));
         }
 
-        VersionedMessages versionedMessages = messagesByTopicPartition.get(topicPartition);
+        var versionedMessages = messagesByTopicPartition.get(topicPartition);
 
         if (clientVersion != 0 && clientVersion >= versionedMessages.version.get()) {
             return Optional.empty();
@@ -58,7 +58,7 @@ public class KafkaTopicsDataTracker {
             filteredMessages = ImmutableList.copyOf(versionedMessages.messages);
         } else {
             filteredMessages = versionedMessages.messages.stream()
-                    .filter(message -> message.value().contains(query))
+                    .filter(message -> message.value().toLowerCase().contains(query) || message.key().toLowerCase().contains(query))
                     .collect(ImmutableList.toImmutableList());
         }
 
@@ -68,14 +68,14 @@ public class KafkaTopicsDataTracker {
     private synchronized void onMessageConsumed(ConsumerRecord<String, String> record) {
         log.info(String.format("Consumed message: [%s]", record));
 
-        TopicPartition topicPartition = new TopicPartition(record.topic(), record.partition());
+        var topicPartition = new TopicPartition(record.topic(), record.partition());
 
         if (!messagesByTopicPartition.containsKey(topicPartition)) {
             messagesByTopicPartition.put(topicPartition, new VersionedMessages(Lists.newLinkedList()));
         }
 
-        VersionedMessages versionedMessages = messagesByTopicPartition.get(topicPartition);
-        LinkedList<ConsumerRecord<String, String>> messages = versionedMessages.messages;
+        var versionedMessages = messagesByTopicPartition.get(topicPartition);
+        var messages = versionedMessages.messages;
         messages.addFirst(record);
 
         if (!maxTopicMessagesCount.equals(MaxTopicMessageCount.EMPTY) && messages.size() > maxTopicMessagesCount.value) {

@@ -61,14 +61,14 @@ public class KafkaBrokersTracker implements AutoCloseable {
     }
 
     private void updateBrokers(Set<String> newBrokerIds) {
-        Set<String> currentBrokers = brokersById.keySet();
-        Set<String> brokersToAdd = Sets.difference(newBrokerIds, currentBrokers);
-        Set<String> brokersToRemove = Sets.difference(currentBrokers, newBrokerIds);
+        var currentBrokers = brokersById.keySet();
+        var brokersToAdd = Sets.difference(newBrokerIds, currentBrokers);
+        var brokersToRemove = Sets.difference(currentBrokers, newBrokerIds);
 
         brokersToAdd.forEach(brokerId -> {
             try {
-                String jsonString = zkClient.readData("/brokers/ids/" + brokerId);
-                JsonObject json = jsonParser.parse(jsonString).getAsJsonObject();
+                var jsonString = zkClient.<String>readData("/brokers/ids/" + brokerId);
+                var json = jsonParser.parse(jsonString).getAsJsonObject();
                 brokersById.put(brokerId, new KafkaBroker(brokerId, json.get("host").getAsString(), json.get("port").getAsInt()));
                 log.info("Broker added: [{}]", brokerId);
             } catch (Exception e) {

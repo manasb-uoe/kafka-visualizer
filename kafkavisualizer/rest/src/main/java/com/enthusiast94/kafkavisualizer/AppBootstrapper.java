@@ -29,14 +29,12 @@ public class AppBootstrapper {
 
     @Bean(destroyMethod = "close")
     public ZkClient zkClient(CommandLineArgs commandLineArgs) {
-        ZkClient zkClient = new ZkClient(commandLineArgs.zookeeperServers, 10000, 10000,
+        var zkClient = new ZkClient(commandLineArgs.zookeeperServers, 10000, 10000,
                 new ZkSerializer() {
-                    @Override
                     public byte[] serialize(Object data) throws ZkMarshallingError {
                         return String.valueOf(data).getBytes();
                     }
 
-                    @Override
                     public Object deserialize(byte[] bytes) throws ZkMarshallingError {
                         return new String(bytes);
                     }
@@ -68,22 +66,21 @@ public class AppBootstrapper {
     @Bean
     public KafkaTopicsDataTracker kafkaTopicsDataTracker(KafkaAllTopicsConsumer kafkaAllTopicsConsumer,
                                                          CommandLineArgs commandLineArgs) {
-        KafkaTopicsDataTracker kafkaTopicsDataTracker =
-                new KafkaTopicsDataTracker(kafkaAllTopicsConsumer, commandLineArgs.maxTopicMessagesCount);
+        var kafkaTopicsDataTracker = new KafkaTopicsDataTracker(kafkaAllTopicsConsumer, commandLineArgs.maxTopicMessagesCount);
         kafkaTopicsDataTracker.start();
         return kafkaTopicsDataTracker;
     }
 
     @Bean(destroyMethod = "close")
     public KafkaBrokersTracker kafkaBrokersTracker(ZkClient zkClient) {
-        KafkaBrokersTracker kafkaBrokersTracker = new KafkaBrokersTracker(zkClient);
+        var kafkaBrokersTracker = new KafkaBrokersTracker(zkClient);
         kafkaBrokersTracker.start();
         return kafkaBrokersTracker;
     }
 
     @Bean(destroyMethod = "close")
     public KafkaTopicsTracker kafkaTopicsTracker(ZkClient zkClient) {
-        KafkaTopicsTracker kafkaTopicsTracker = new KafkaTopicsTracker(zkClient);
+        var kafkaTopicsTracker = new KafkaTopicsTracker(zkClient);
         kafkaTopicsTracker.start();
         return kafkaTopicsTracker;
     }

@@ -58,15 +58,15 @@ public class KafkaTopicsTracker implements AutoCloseable {
     }
 
     private void updateTopics(Set<String> topicNames) {
-        Set<String> currentTopics = topicsByName.keySet();
-        Set<String> topicsToAdd = Sets.difference(topicNames, currentTopics);
-        Set<String> topicsToRemove = Sets.difference(currentTopics, topicNames);
+        var currentTopics = topicsByName.keySet();
+        var topicsToAdd = Sets.difference(topicNames, currentTopics);
+        var topicsToRemove = Sets.difference(currentTopics, topicNames);
 
         topicsToAdd.stream()
                 .filter(topicName -> !topicName.equals("__consumer_offsets"))
                 .forEach(topicName -> {
                     try {
-                        String partitionsPath = "/brokers/topics/" + topicName + "/partitions";
+                        var partitionsPath = "/brokers/topics/" + topicName + "/partitions";
                         zkClient.waitUntilExists(partitionsPath, TimeUnit.SECONDS, 5);
                         topicsByName.put(topicName, new KafkaTopic(topicName, zkClient.getChildren(partitionsPath).size()));
                         log.info("Topic added: [{}]", topicName);

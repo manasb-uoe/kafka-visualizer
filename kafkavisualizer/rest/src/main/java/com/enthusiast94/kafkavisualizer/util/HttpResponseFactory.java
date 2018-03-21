@@ -31,7 +31,7 @@ public class HttpResponseFactory {
     }
 
     private String createErrorJsonString(String errorMessage) {
-        JsonObject jsonObject = new JsonObject();
+        var jsonObject = new JsonObject();
         jsonObject.addProperty("error", errorMessage);
         return gson.toJson(jsonObject);
     }

@@ -20,9 +20,9 @@ public class CommandLineArgs {
                     "--zookeeper=host:port and --kafka=host:port", Arrays.toString(AppEnvironment.values())));
         }
 
-        String argsString = Arrays.stream(args).collect(Collectors.joining(" "));
+        var argsString = Arrays.stream(args).collect(Collectors.joining(" "));
 
-        Matcher envMatcher = Pattern.compile("--env=(\\w*)").matcher(argsString);
+        var envMatcher = Pattern.compile("--env=(\\w*)").matcher(argsString);
         if (!envMatcher.find()) {
             throw new DefectException(String.format("Incorrect app environment format! The format must be [%s]",
                     envMatcher.pattern().toString()));
@@ -30,7 +30,7 @@ public class CommandLineArgs {
             environment = AppEnvironment.fromString(envMatcher.group(1));
         }
 
-        Matcher kafkaMatcher = Pattern.compile("--kafka=([^\\s,]+:[0-9]+(,[^\\s,]+:[0-9]+)*)").matcher(argsString);
+        var kafkaMatcher = Pattern.compile("--kafka=([^\\s,]+:[0-9]+(,[^\\s,]+:[0-9]+)*)").matcher(argsString);
         if (!kafkaMatcher.find()) {
             throw new DefectException(String.format("Incorrect kafka servers format! The format must be [%s]",
                     kafkaMatcher.pattern().toString()));
@@ -38,7 +38,7 @@ public class CommandLineArgs {
 
         kafkaServers = kafkaMatcher.group(1);
 
-        Matcher zookeeperMatcher = Pattern.compile("--zookeeper=([^\\s,]+:[0-9]+(,[^\\s,]+:[0-9]+)*)").matcher(argsString);
+        var zookeeperMatcher = Pattern.compile("--zookeeper=([^\\s,]+:[0-9]+(,[^\\s,]+:[0-9]+)*)").matcher(argsString);
         if (!zookeeperMatcher.find()) {
             throw new DefectException(String.format("Incorrect zookeeper servers format! The format must be [%s]",
                     kafkaMatcher.pattern().toString()));
@@ -46,7 +46,7 @@ public class CommandLineArgs {
 
         zookeeperServers = zookeeperMatcher.group(1);
 
-        Matcher maxTopicMessagesCountMatcher = Pattern.compile("--maxTopicMessagesCount=([0-9]+)").matcher(argsString);
+        var maxTopicMessagesCountMatcher = Pattern.compile("--maxTopicMessagesCount=([0-9]+)").matcher(argsString);
         if (!maxTopicMessagesCountMatcher.find()) {
             maxTopicMessagesCount = MaxTopicMessageCount.EMPTY;
         } else {

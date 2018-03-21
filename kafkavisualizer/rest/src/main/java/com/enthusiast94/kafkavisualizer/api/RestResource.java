@@ -58,7 +58,7 @@ public class RestResource {
     @GET
     @Path("/brokers")
     public Response brokers(@QueryParam("version") long version) {
-        Optional<VersionedResponse<ImmutableList<KafkaBroker>>> brokers = kafkaBrokersTracker.getBrokers(version);
+        var brokers = kafkaBrokersTracker.getBrokers(version);
         if (brokers.isPresent()) {
             return responseFactory.createOkResponse(brokers.get());
         } else {
@@ -69,7 +69,7 @@ public class RestResource {
     @GET
     @Path("/topics")
     public Response topics(@QueryParam("version") long version) {
-        Optional<VersionedResponse<ImmutableList<KafkaTopic>>> topics = kafkaTopicsTracker.getTopics(version);
+        var topics = kafkaTopicsTracker.getTopics(version);
         if (topics.isPresent()) {
             return responseFactory.createOkResponse(topics.get());
         } else {
@@ -109,7 +109,7 @@ public class RestResource {
                               @QueryParam("version") long version,
                               @QueryParam("query") String query) {
         try {
-            Optional<VersionedResponse<ImmutableList<ConsumerRecord<String, String>>>> records =
+            var records =
                     kafkaTopicsDataTracker.getRecords(new TopicPartition(topicName, partition), version, query);
             if (!records.isPresent()) {
                 return responseFactory.createNotModifiedResponse();
@@ -126,13 +126,13 @@ public class RestResource {
     public Response postTopicData(@PathParam("topicName") String topicName,
                                   String data) {
         try {
-            Pair<String, String> keyValuePair = parseKeyValuePair(data);
+            var keyValuePair = parseKeyValuePair(data);
 
             if (!doesTopicExist(topicName)) {
                 return responseFactory.createNotFoundResponse(String.format("No topic exists with the name [%s]", topicName));
             }
 
-            RecordMetadata metadata = kafkaProducerWrapper.publish(keyValuePair.getKey(), keyValuePair.getValue(), topicName);
+            var metadata = kafkaProducerWrapper.publish(keyValuePair.getKey(), keyValuePair.getValue(), topicName);
             return responseFactory.createOkResponse(metadata);
         } catch (Exception e) {
             return responseFactory.createServerErrorResponse(e);

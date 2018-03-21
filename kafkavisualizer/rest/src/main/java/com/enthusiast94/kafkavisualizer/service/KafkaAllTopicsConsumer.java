@@ -26,7 +26,7 @@ public class KafkaAllTopicsConsumer implements AutoCloseable {
     private final AtomicBoolean isSubscribed = new AtomicBoolean();
 
     public KafkaAllTopicsConsumer(String kafkaServersString) {
-        Properties properties = new Properties();
+        var properties = new Properties();
         properties.put("bootstrap.servers", kafkaServersString);
         properties.put("group.id", KafkaStatics.GROUP_ID);
         properties.put("enable.auto.commit", "true");
@@ -43,7 +43,7 @@ public class KafkaAllTopicsConsumer implements AutoCloseable {
         subscribeFromBeginning();
 
         executorService.scheduleAtFixedRate(() -> {
-            ConsumerRecords<String, String> records = kafkaConsumer.poll(100);
+            var records = kafkaConsumer.poll(100);
             records.forEach(recordConsumer);
         }, 0, 1000, TimeUnit.MILLISECONDS);
     }

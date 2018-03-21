@@ -13,14 +13,14 @@ public class KafkaProducerWrapper implements AutoCloseable {
     private final KafkaProducer<String, String> kafkaProducer;
 
     public KafkaProducerWrapper(String kafkaServersString) {
-        Properties properties = new Properties();
+        var properties = new Properties();
         properties.put("bootstrap.servers", kafkaServersString);
 
         kafkaProducer = new KafkaProducer<>(properties, new StringSerializer(), new StringSerializer());
     }
 
     public RecordMetadata publish(String key, String value, String topicName) throws Exception {
-        ProducerRecord<String, String> record = new ProducerRecord<>(topicName, key, value);
+        var record = new ProducerRecord<>(topicName, key, value);
         return kafkaProducer.send(record).get(5000, TimeUnit.MILLISECONDS);
     }
 
