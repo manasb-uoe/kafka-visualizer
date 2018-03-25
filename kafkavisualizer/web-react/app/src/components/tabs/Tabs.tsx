@@ -36,7 +36,7 @@ export class Tabs extends React.Component<TabsProps, TabsState> {
         // tslint:disable-next-line:no-any
         let tabs: React.ReactElement<any>[] = [];
         // tslint:disable-next-line:no-any
-        let tabBody: React.ReactElement<any> | null = null;
+        let tabBodies: React.ReactElement<any>[] = [];
 
         // tslint:disable-next-line:no-any
         React.Children.forEach(this.props.children, (child: any, index) => {
@@ -52,24 +52,22 @@ export class Tabs extends React.Component<TabsProps, TabsState> {
                 </a>
             );
 
-            if (index === this.state.activeTabIndex) {
-                tabBody = (
-                    <div>
-                        {child}
-                    </div>
-                );
-            }
+            tabBodies.push(
+                <div style={index === this.state.activeTabIndex ? { display: 'block' } : { display: 'none' }}>
+                    {child}
+                </div>
+            );
         });
 
         return (
-            <div style={{marginTop: '10px'}}>
+            <div style={{ marginTop: '10px' }}>
                 <nav>
                     <div className="nav nav-tabs" role="tablist">
                         {tabs}
                     </div>
                 </nav>
                 <div>
-                    {tabBody}
+                    {tabBodies}
                 </div>
             </div>
         );

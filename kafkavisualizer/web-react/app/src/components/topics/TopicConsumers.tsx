@@ -14,7 +14,7 @@ interface TopicConsumersProps {
 }
 
 export class TopicConsumers extends React.Component<TopicConsumersProps, {}> {
-    
+
     componentWillReceiveProps(nextProps: TopicConsumersProps) {
         if (nextProps.selectedTopic && nextProps.selectedPartition !== Number.MIN_VALUE &&
             (!_.isEqual(this.props.selectedTopic, nextProps.selectedTopic) || this.props.selectedPartition !== nextProps.selectedPartition)) {
