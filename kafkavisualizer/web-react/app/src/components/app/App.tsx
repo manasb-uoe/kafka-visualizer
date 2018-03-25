@@ -2,7 +2,8 @@ import * as React from 'react';
 import './App.css';
 import TopicList from '../topics/TopicList';
 import BrokerList from '../brokers/BrokerList';
-import TopicMessages  from '../topics/TopicMessage';
+import TopicMessages from '../topics/TopicMessage';
+import { Tabs, Tab } from '../tabs/Tabs';
 
 class App extends React.Component {
   render() {
@@ -14,7 +15,14 @@ class App extends React.Component {
             <TopicList />
           </div>
           <div className="col-9 ml-auto" >
-            <TopicMessages />            
+            <Tabs>
+              <Tab title="Messages">
+                <TopicMessages />
+              </Tab>
+              <Tab title="Tab Two">
+                <h3>hello again</h3>
+              </Tab>
+            </Tabs>
           </div>
         </div>
       </div>
