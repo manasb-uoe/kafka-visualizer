@@ -1,6 +1,7 @@
 import Topic  from '../domain/Topic';
 import Broker from '../domain/Broker';
 import TopicMessage from '../domain/TopicMessage';
+import { Consumer } from '../domain/Consumer';
 
 export interface ITopicsState {
     isLoading: boolean;
@@ -22,10 +23,17 @@ export interface BrokersState {
     error?: string;
 }
 
+export interface ConsumersState {
+    isLoading: boolean;
+    items: Consumer[];
+    error?: string;
+}
+
 export interface IAppState {
     topics: ITopicsState;
     brokers: BrokersState;
     topicMessages: TopicMessagesState;
+    consumers: ConsumersState;
 }
 
 const initialState: IAppState =  {
@@ -40,6 +48,10 @@ const initialState: IAppState =  {
     topicMessages: {
         isLoading: false,
         items: [],
+    },
+    consumers: {
+        isLoading: false,
+        items: []
     }
 };
 

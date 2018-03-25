@@ -4,6 +4,7 @@ import TopicList from '../topics/TopicList';
 import BrokerList from '../brokers/BrokerList';
 import TopicMessages from '../topics/TopicMessage';
 import { Tabs, Tab } from '../tabs/Tabs';
+import TopicConsumers from '../topics/TopicConsumers';
 
 class App extends React.Component {
   render() {
@@ -19,8 +20,8 @@ class App extends React.Component {
               <Tab title="Messages">
                 <TopicMessages />
               </Tab>
-              <Tab title="Tab Two">
-                <h3>hello again</h3>
+              <Tab title="Consumers">
+                <TopicConsumers />
               </Tab>
             </Tabs>
           </div>

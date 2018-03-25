@@ -1,3 +1,4 @@
+import { LOAD_TOPIC_CONSUMERS_STARTED, LOAD_TOPIC_CONSUMERS_SUCCESS, LOAD_TOPIC_CONSUMERS_FAILURE } from './actionTypes';
 import { Action } from 'redux';
 import Topic from '../domain/Topic';
 import * as types from '../actions/actionTypes';
@@ -5,6 +6,7 @@ import api from '../api/Api';
 import { Dispatch } from 'react-redux';
 import TopicMessage from '../domain/TopicMessage';
 import { ISubscription } from 'rxjs/Subscription';
+import { Consumer } from '../domain/Consumer';
 
 export interface LoadTopicsAction extends Action {
     topics: Topic[];
@@ -21,6 +23,11 @@ export interface SelectPartitionAction extends Action {
 
 export interface LoadTopicMessagesAction extends Action {
     messages: TopicMessage[];
+    error: string;
+}
+
+export interface LoadTopicConsumersAction extends Action {
+    consumers: Consumer[];
     error: string;
 }
 
@@ -81,6 +88,30 @@ export function loadTopicMessages(topic: Topic, partition: number, query: string
             .subscribe(
                 messages => dispatch(loadTopicMessagesSuccess(messages)),
                 error => dispatch(loadTopicMessagesFailure(error))
+            );
+    };
+}
+
+export function loadTopicConsumersStarted(): LoadTopicConsumersAction {
+    return { type: LOAD_TOPIC_CONSUMERS_STARTED, consumers: [], error: '' };
+}
+
+export function loadTopicConsumersSuccess(consumers: Consumer[]) {
+    return { type: LOAD_TOPIC_CONSUMERS_SUCCESS, consumers: consumers, error: '' };
+}
+
+export function loadTopicConsumersFailure(error: string) {
+    return { type: LOAD_TOPIC_CONSUMERS_FAILURE, consumers: [], error: error };
+}
+
+export function loadTopicConsumers(topic: Topic, partition: number) {
+    // tslint:disable-next-line:no-any
+    return (dispatch: Dispatch<any>) => {
+        dispatch(loadTopicConsumersStarted());
+        api.getTopicConsumers(topic, partition)
+            .subscribe(
+                consumers => dispatch(loadTopicConsumersSuccess(consumers)),
+                error => dispatch(loadTopicConsumersFailure(error))
             );
     };
 }

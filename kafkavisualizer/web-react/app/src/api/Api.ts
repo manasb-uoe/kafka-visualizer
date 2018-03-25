@@ -1,3 +1,4 @@
+import { Consumer } from './../domain/Consumer';
 import { Observable, Subject } from 'rxjs';
 import Topic from '../domain/Topic';
 import Broker from '../domain/Broker';
@@ -9,6 +10,7 @@ export interface IApi {
     getBrokers(): Observable<Array<Broker>>;
     getTopicMessages(topic: Topic, partition: number, query: string): Observable<Array<TopicMessage>>;
     publishTopicMessage(topic: Topic, key: string, value: string): Observable<RecordMetadata>;
+    getTopicConsumers(topic: Topic, partition: number): Observable<Array<Consumer>>;
 }
 
 class Api implements IApi {
@@ -55,6 +57,21 @@ class Api implements IApi {
         );
     }
 
+    getTopicConsumers(topic: Topic, partition: number): Observable<Consumer[]> {
+        const subject = new Subject<Consumer[]>();
+        fetch(`/api/consumers/${topic.name}/${partition}`)
+            .then((response) => response.json())
+            .then(jsonResponse => {
+                if (jsonResponse.error) {
+                    return subject.error(jsonResponse.error);
+                }
+                return subject.next(jsonResponse);
+            })
+            .catch(error => subject.error(error));
+
+        return subject.asObservable();
+    }
+
     private getVersionedResponseStream<T>(endpoint: string, period: number): Observable<T> {
         return this.getResponseStream(endpoint, period, true);
     }
@@ -74,7 +91,9 @@ class Api implements IApi {
                 })
                 .then(
                     response => {
-                        if (isVersioned) {
+                        if (response.error) {
+                            subject.error(response.error);
+                        } else if (isVersioned) {
                             version = response.version;
                             subject.next(response.data);
                         } else {
