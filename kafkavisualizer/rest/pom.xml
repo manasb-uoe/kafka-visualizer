@@ -78,20 +78,12 @@
                     <target>10</target>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source></source>
-                    <target></target>
-                </configuration>
-            </plugin>
         </plugins>
 
         <resources>
             <resource>
                 <targetPath>static</targetPath>
-                <directory>../web/dist</directory>
+                <directory>../web-react/app/build</directory>
             </resource>
         </resources>
     </build>

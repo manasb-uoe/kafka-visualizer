@@ -80,7 +80,7 @@ export class Tabs extends React.Component<TabsProps, TabsState> {
         }
 
         for (let child of children) {
-            if (child.type.name !== 'Tab') {
+            if (child.type !== Tab) {
                 throw new Error('Only children of type \'Tab\' are allowed.');
             }
         }
