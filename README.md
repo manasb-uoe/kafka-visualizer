@@ -1,5 +1,5 @@
 # Kafka Visualizer
-A web client for visualizing your Kafka cluster. Developed using **Spring Boot**, **Angular 4** and **Bootstrap 4**.
+A web client for visualizing your Kafka cluster. Developed using **Spring Boot**, **ReactJS** and **Bootstrap 4**.
 
 ![Screenshot](https://github.com/enthusiast94/kafka-visualizer/blob/master/screenshot_1.png)
 
@@ -12,13 +12,13 @@ The executable jar will be generated under the `target` directory of `kafka-visu
 
 **Requirements:** 
 1. Maven
-2. JDK 9 with JavaFX
+2. JDK 10 with JavaFX
 3. Node Package Manager (npm)
 
 ## How to run?
 Run the executable jar using the following command and then navigate to `localhost:8080` on your browser:
 
-`$ java --add-modules java.activation -jar .\kafka-visualizer-rest-1.0-SNAPSHOT.jar --zookeeper=hostname:port --kafka=hostname:port --env=<DEV,QA,UAT or PROD> [--maxTopicMessagesCount=<number>]`
+`$ java --add-modules java.activation -jar .\kafka-visualizer-rest-1.0-SNAPSHOT.jar --zookeeper=hostname:port --kafka=hostname:port --env=<DEV,QA,UAT or PROD>`
 
 ## Rest API endpoints
 - **`GET /api/brokers`**: Returns a list of all brokers in the cluster.
