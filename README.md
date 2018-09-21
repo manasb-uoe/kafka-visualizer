@@ -26,8 +26,6 @@ Run the executable jar using the following command and then navigate to `localho
 
 ## How to run (Dockerfile)?
 
-# Kafka-Visuals
-
 ```sh
 $ docker pull kbhargava/kafka-visuals
 $ docker run -p 8080:8080 --rm kbhargava/kafka-visuals <zookeeper IP:Host> <kafka IP:host> <DEV, PROD, UAT, QA>
