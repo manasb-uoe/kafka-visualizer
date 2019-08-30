@@ -8,8 +8,8 @@ import org.springframework.http.MediaType;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -140,13 +140,15 @@ public class RestResource {
                 .anyMatch(topic -> topic.name.equals(topicName));
     }
 
-    private String[] parseKeyValuePair(String input) throws UnsupportedEncodingException {
-        input = URLDecoder.decode(input, "utf8");
+    private Pattern keyValuePairPattern = Pattern.compile("key=(.*)&value=(.*)", Pattern.DOTALL);
+
+    private String[] parseKeyValuePair(String input) {
+        input = URLDecoder.decode(input, StandardCharsets.UTF_8);
         if (input.startsWith("?")) {
             input = input.substring(1);
         }
 
-        Matcher matcher = Pattern.compile("key=(.*)&value=(.*)", Pattern.DOTALL).matcher(input);
+        Matcher matcher = keyValuePairPattern.matcher(input);
         if (!matcher.find()){
             throw new IllegalArgumentException("no key/value params found in the posted body");
         }
