@@ -81,7 +81,7 @@ public class KafkaTopicsTracker implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         executor.shutdownNow();
     }
 }

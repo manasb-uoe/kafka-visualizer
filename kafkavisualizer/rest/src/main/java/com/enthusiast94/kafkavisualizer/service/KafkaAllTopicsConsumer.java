@@ -5,7 +5,6 @@ import com.enthusiast94.kafkavisualizer.util.exception.DefectException;
 import com.google.common.collect.ImmutableList;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -63,7 +62,7 @@ public class KafkaAllTopicsConsumer implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         kafkaConsumer.close();
     }
 }

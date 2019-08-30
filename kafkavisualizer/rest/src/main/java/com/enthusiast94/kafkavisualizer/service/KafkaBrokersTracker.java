@@ -69,7 +69,7 @@ public class KafkaBrokersTracker implements AutoCloseable {
                 version.incrementAndGet();
                 log.info("Broker added: [{}]", brokerId);
             } catch (Exception e) {
-                log.error("Exception fetching broker info for broker [{}]: ", brokerId, e.getMessage(), e);
+                log.error("Exception fetching broker info for broker [{}]: ", brokerId, e);
             }
         });
 
@@ -81,7 +81,7 @@ public class KafkaBrokersTracker implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         executor.shutdownNow();
     }
 }

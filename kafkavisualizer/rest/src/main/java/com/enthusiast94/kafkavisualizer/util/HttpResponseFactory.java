@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 
 import javax.ws.rs.core.Response;
 
-
 public class HttpResponseFactory {
 
     private final Gson gson = new Gson();

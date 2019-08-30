@@ -3,9 +3,7 @@ package com.enthusiast94.kafkavisualizer.domain;
 import com.enthusiast94.kafkavisualizer.util.exception.DefectException;
 
 import java.util.Arrays;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class CommandLineArgs {
 
@@ -20,7 +18,7 @@ public class CommandLineArgs {
                     "--zookeeper=host:port and --kafka=host:port", Arrays.toString(AppEnvironment.values())));
         }
 
-        var argsString = Arrays.stream(args).collect(Collectors.joining(" "));
+        var argsString = String.join(" ", args);
 
         var envMatcher = Pattern.compile("--env=(\\w*)").matcher(argsString);
         if (!envMatcher.find()) {
@@ -50,7 +48,7 @@ public class CommandLineArgs {
         if (!maxTopicMessagesCountMatcher.find()) {
             maxTopicMessagesCount = MaxTopicMessageCount.EMPTY;
         } else {
-            maxTopicMessagesCount = new MaxTopicMessageCount(Integer.valueOf(maxTopicMessagesCountMatcher.group(1)));
+            maxTopicMessagesCount = new MaxTopicMessageCount(Integer.parseInt(maxTopicMessagesCountMatcher.group(1)));
         }
     }
 }
