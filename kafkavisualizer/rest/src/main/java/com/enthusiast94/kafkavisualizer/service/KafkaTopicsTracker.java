@@ -5,15 +5,13 @@ import com.enthusiast94.kafkavisualizer.util.exception.DefectException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import javafx.collections.FXCollections;
-import javafx.collections.MapChangeListener;
-import javafx.collections.ObservableMap;
 import org.I0Itec.zkclient.ZkClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -26,7 +24,7 @@ public class KafkaTopicsTracker implements AutoCloseable {
 
     private final ZkClient zkClient;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final ObservableMap<String, KafkaTopic> topicsByName = FXCollections.synchronizedObservableMap(FXCollections.observableHashMap());
+    private final ConcurrentHashMap<String, KafkaTopic> topicsByName = new ConcurrentHashMap<>();
     private final AtomicLong version = new AtomicLong();
     private final AtomicBoolean started = new AtomicBoolean();
 
@@ -39,7 +37,6 @@ public class KafkaTopicsTracker implements AutoCloseable {
             throw new DefectException("Can only be started once!");
         }
 
-        topicsByName.addListener((MapChangeListener<String, KafkaTopic>) change -> version.incrementAndGet());
         zkClient.waitUntilExists("/brokers", TimeUnit.SECONDS, 10);
 
         executor.submit(() -> {
@@ -69,6 +66,7 @@ public class KafkaTopicsTracker implements AutoCloseable {
                         var partitionsPath = "/brokers/topics/" + topicName + "/partitions";
                         zkClient.waitUntilExists(partitionsPath, TimeUnit.SECONDS, 5);
                         topicsByName.put(topicName, new KafkaTopic(topicName, zkClient.getChildren(partitionsPath).size()));
+                        version.incrementAndGet();
                         log.info("Topic added: [{}]", topicName);
                     } catch (Exception e) {
                         log.error("Exception fetching info for topic [{}]: {}", topicName, e.getMessage(), e);
@@ -77,6 +75,7 @@ public class KafkaTopicsTracker implements AutoCloseable {
 
         topicsToRemove.forEach(topicName -> {
             topicsByName.remove(topicName);
+            version.incrementAndGet();
             log.info("Topic deleted: [{}]", topicName);
         });
     }

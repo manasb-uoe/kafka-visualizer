@@ -1,16 +1,8 @@
 package com.enthusiast94.kafkavisualizer.api;
 
 import com.enthusiast94.kafkavisualizer.domain.AppEnvironment;
-import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaBroker;
-import com.enthusiast94.kafkavisualizer.domain.kafka.KafkaTopic;
 import com.enthusiast94.kafkavisualizer.service.*;
 import com.enthusiast94.kafkavisualizer.util.HttpResponseFactory;
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import javafx.util.Pair;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.http.MediaType;
 
@@ -18,7 +10,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -132,7 +123,7 @@ public class RestResource {
                 return responseFactory.createNotFoundResponse(String.format("No topic exists with the name [%s]", topicName));
             }
 
-            var metadata = kafkaProducerWrapper.publish(keyValuePair.getKey(), keyValuePair.getValue(), topicName);
+            var metadata = kafkaProducerWrapper.publish(keyValuePair[0], keyValuePair[1], topicName);
             return responseFactory.createOkResponse(metadata);
         } catch (Exception e) {
             return responseFactory.createServerErrorResponse(e);
@@ -149,7 +140,7 @@ public class RestResource {
                 .anyMatch(topic -> topic.name.equals(topicName));
     }
 
-    private Pair<String, String> parseKeyValuePair(String input) throws UnsupportedEncodingException {
+    private String[] parseKeyValuePair(String input) throws UnsupportedEncodingException {
         input = URLDecoder.decode(input, "utf8");
         if (input.startsWith("?")) {
             input = input.substring(1);
@@ -160,6 +151,6 @@ public class RestResource {
             throw new IllegalArgumentException("no key/value params found in the posted body");
         }
 
-        return new Pair<>(matcher.group(1), matcher.group(2));
+        return new String[]{matcher.group(1), matcher.group(2)};
     }
 }
