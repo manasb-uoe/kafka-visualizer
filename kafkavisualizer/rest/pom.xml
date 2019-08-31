@@ -73,22 +73,45 @@
             <version>1.2.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>web-react</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
+
         <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>Unpack React App</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <includeArtifactIds>web-react</includeArtifactIds>
+                            <excludes>META-INF/**</excludes>
+                            <outputDirectory>${project.build.directory}/classes/static</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
         </plugins>
 
-        <resources>
-            <resource>
-                <targetPath>static</targetPath>
-                <directory>../web-react/app/build</directory>
-            </resource>
-        </resources>
     </build>
 
 </project>
