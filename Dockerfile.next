@@ -1,0 +1,3 @@
+FROM openjdk:12-jdk-alpine
+
+RUN apk --update add nodejs
