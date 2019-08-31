@@ -13,6 +13,7 @@
     <artifactId>rest</artifactId>
 
     <dependencies>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -48,6 +49,9 @@
         </dependency>
 
         <dependency>
+<!--            TODO Why not kafka-clients?-->
+<!--            TODO Upgrade to the latest version-->
+<!--            TODO Why exclude slf4j?-->
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.11</artifactId>
             <version>1.0.0</version>
@@ -68,6 +72,7 @@
             <artifactId>jakarta.activation</artifactId>
             <version>1.2.1</version>
         </dependency>
+
     </dependencies>
 
     <build>
