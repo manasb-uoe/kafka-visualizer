@@ -20,4 +20,26 @@
         <module>rest</module>
     </modules>
 
+    <properties>
+        <compiler.java.version>12</compiler.java.version>
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.1</version>
+                    <configuration>
+                        <source>${compiler.java.version}</source>
+                        <target>${compiler.java.version}</target>
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+    </build>
+
 </project>

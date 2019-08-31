@@ -12,10 +12,6 @@
 
     <artifactId>rest</artifactId>
 
-    <properties>
-        <compiler.java.version>12</compiler.java.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -79,15 +75,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
-                <configuration>
-                    <source>12</source>
-                    <target>12</target>
-                </configuration>
             </plugin>
         </plugins>
 
