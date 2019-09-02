@@ -7,8 +7,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class KafkaTopicsDataTracker {
 
-    private static final Logger log = LogManager.getLogger(KafkaTopicsDataTracker.class);
+    private static final Logger log = LoggerFactory.getLogger(KafkaTopicsDataTracker.class);
 
     private final KafkaAllTopicsConsumer kafkaAllTopicsConsumer;
     private final MaxTopicMessageCount maxTopicMessagesCount;
