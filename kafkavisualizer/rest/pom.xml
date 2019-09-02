@@ -50,10 +50,9 @@
 
         <dependency>
 <!--            TODO Why not kafka-clients?-->
-<!--            TODO Upgrade to the latest version-->
             <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.11</artifactId>
-            <version>1.0.0</version>
+            <artifactId>kafka_2.12</artifactId>
+            <version>2.3.0</version>
         </dependency>
 
         <dependency>
