@@ -13,6 +13,7 @@ public class CommandLineArgs {
     public final MaxTopicMessageCount maxTopicMessagesCount;
 
     public CommandLineArgs(String[] args) {
+        //TODO Use some standard library to parse command line args
         //TODO The 'env' arg seems meaningless
         if (args.length < 3) {
             throw new DefectException(String.format("The following command line arguments are required: --env=%s, " +
