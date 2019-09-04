@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.enthusiast94.kafkavisualizer</groupId>
+        <artifactId>kafka-visualizer</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>docker</artifactId>
+
+    <properties>
+        <image.build.dir>${project.build.directory}/image</image.build.dir>
+        <image.name>${project.parent.artifactId}</image.name>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>rest</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>Copy the Dockerfile</id>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                            <outputDirectory>${image.build.dir}</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <!-- Suppress default executions - we have to deal with resources in a special way -->
+                    <execution>
+                        <id>default-resources</id>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>default-testResources</id>
+                        <goals>
+                            <goal>testResources</goal>
+                        </goals>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>Copy REST App</id>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <includeArtifactIds>rest</includeArtifactIds>
+                            <outputDirectory>${image.build.dir}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>Build Docker image</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <workingDirectory>${image.build.dir}</workingDirectory>
+                            <executable>docker</executable>
+                            <arguments>
+                                <argument>build</argument>
+                                <argument>-t</argument>
+                                <argument>${image.name}:${project.version}</argument>
+                                <argument>.</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <!-- Suppress default executions - we don't have jar output here -->
+                    <execution>
+                        <id>default-jar</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <!-- Suppress default executions - no Java code here -->
+                    <execution>
+                        <id>default-compile</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <!-- Suppress default executions - no Java code here -->
+                    <execution>
+                        <id>default-test</id>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+                <executions>
+                    <!-- Suppress default executions - no artifact to install  -->
+                    <execution>
+                        <id>default-install</id>
+                        <goals>
+                            <goal>install</goal>
+                        </goals>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+
+    </build>
+
+</project>
