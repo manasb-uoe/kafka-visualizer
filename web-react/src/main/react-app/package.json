@@ -12,7 +12,7 @@
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
-    "react-scripts-ts": "2.13.0",
+    "react-scripts-ts": "4.0.8",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
     "rxjs": "^5.5.6",
